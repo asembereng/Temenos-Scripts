@@ -1,19 +1,56 @@
 # TemenosChecks.TPH Module
 # Payment Hub monitoring checks for Temenos environments
+#
+# REMOTE DEPLOYMENT SUPPORT FOR TPH MONITORING:
+# ============================================
+# This module enables monitoring of Temenos Payment Hub (TPH) services deployed on separate hosts
+# from the Alert Manager application. Supports distributed architectures common in enterprise banking.
+#
+# TYPICAL TPH DEPLOYMENT PATTERNS:
+# 1. Dedicated TPH Application Servers: TPH services on clustered application servers
+# 2. Load-Balanced Environments: Multiple TPH instances behind load balancers  
+# 3. Multi-Tier Architecture: TPH web tier, application tier, and database tier on separate hosts
+# 4. DMZ Deployments: TPH gateway services in DMZ, core processing in secure internal networks
+#
+# REMOTE MONITORING CONFIGURATION:
+# - Ensure TPH application servers have PowerShell remoting enabled
+# - Configure service account with read access to TPH services and logs
+# - Validate network connectivity from Alert Manager to TPH hosts on WinRM ports
+# - Test authentication using 'Test-WSMan <TPH-Server>' command
+#
+# TPH-SPECIFIC MONITORING CONSIDERATIONS:
+# - Payment processing services are mission-critical; monitor service status continuously
+# - Transaction queue depths indicate processing health and potential bottlenecks
+# - Error logs provide early warning of payment processing issues
+# - Performance metrics help identify capacity constraints
 
 using module TemenosChecks.Common
 
-# Test TPH Services
+# Test TPH Services - Monitor critical Payment Hub services across distributed infrastructure
 function Test-TphServices {
     [CmdletBinding()]
     param(
+        # REMOTE DEPLOYMENT: Target TPH server hostname, FQDN, or IP address
+        # Examples: 'TPHPROD01', 'tph-app1.bank.local', '10.0.1.50'
+        # This enables monitoring TPH services on dedicated application servers
         [Parameter(Mandatory)]
         [string]$ServerName,
         
+        # TPH Service Names: Default covers common TPH service patterns
+        # Customize based on your TPH deployment and service naming conventions
+        # These may vary between TPH versions and installation configurations
         [string[]]$ServiceNames = @('TPHService', 'TPHPaymentService', 'TPHProcessingService'),
         
+        # SECURITY: Authentication for remote TPH host access
+        # Use dedicated monitoring service account with minimal required permissions
+        # Account should have:
+        # - Read access to Windows Services on TPH hosts
+        # - Remote PowerShell execution permissions
+        # - Local logon rights on TPH servers (if using NTLM)
         [PSCredential]$Credential,
         
+        # MONITORING THRESHOLDS: Currently reserved for future enhancements
+        # Could include response time thresholds, memory usage limits, etc.
         [hashtable]$Thresholds = @{}
     )
     
