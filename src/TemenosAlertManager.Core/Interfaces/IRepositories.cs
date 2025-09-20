@@ -88,6 +88,16 @@ public interface IUnitOfWork : IDisposable
     IRepository<AutomationWorkflow> AutomationWorkflows { get; }
     IRepository<WorkflowExecution> WorkflowExecutions { get; }
     IRepository<Core.Entities.OptimizationRecommendation> OptimizationRecommendations { get; }
+    
+    // Phase 4 repositories
+    IRepository<TestExecution> TestExecutions { get; }
+    IRepository<PerformanceTestResult> PerformanceTestResults { get; }
+    IRepository<SecurityScanResult> SecurityScanResults { get; }
+    IRepository<Deployment> Deployments { get; }
+    IRepository<ProductionIncident> ProductionIncidents { get; }
+    IRepository<MaintenanceWindow> MaintenanceWindows { get; }
+    IRepository<QualityGate> QualityGates { get; }
+    
     IServiceConfigRepository ServiceConfigs { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

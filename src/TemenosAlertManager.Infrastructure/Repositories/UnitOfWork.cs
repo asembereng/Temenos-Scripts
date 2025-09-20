@@ -95,6 +95,36 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<Core.Entities.OptimizationRecommendation> OptimizationRecommendations => 
         _optimizationRecommendations ??= new Repository<Core.Entities.OptimizationRecommendation>(_context);
 
+    // Phase 4 repositories
+    private IRepository<TestExecution>? _testExecutions;
+    private IRepository<PerformanceTestResult>? _performanceTestResults;
+    private IRepository<SecurityScanResult>? _securityScanResults;
+    private IRepository<Deployment>? _deployments;
+    private IRepository<ProductionIncident>? _productionIncidents;
+    private IRepository<MaintenanceWindow>? _maintenanceWindows;
+    private IRepository<QualityGate>? _qualityGates;
+
+    public IRepository<TestExecution> TestExecutions => 
+        _testExecutions ??= new Repository<TestExecution>(_context);
+
+    public IRepository<PerformanceTestResult> PerformanceTestResults => 
+        _performanceTestResults ??= new Repository<PerformanceTestResult>(_context);
+
+    public IRepository<SecurityScanResult> SecurityScanResults => 
+        _securityScanResults ??= new Repository<SecurityScanResult>(_context);
+
+    public IRepository<Deployment> Deployments => 
+        _deployments ??= new Repository<Deployment>(_context);
+
+    public IRepository<ProductionIncident> ProductionIncidents => 
+        _productionIncidents ??= new Repository<ProductionIncident>(_context);
+
+    public IRepository<MaintenanceWindow> MaintenanceWindows => 
+        _maintenanceWindows ??= new Repository<MaintenanceWindow>(_context);
+
+    public IRepository<QualityGate> QualityGates => 
+        _qualityGates ??= new Repository<QualityGate>(_context);
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await _context.SaveChangesAsync(cancellationToken);

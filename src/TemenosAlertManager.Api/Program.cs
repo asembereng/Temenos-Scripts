@@ -67,6 +67,14 @@ builder.Services.AddScoped<IPerformanceOptimizer, PerformanceOptimizer>();
 builder.Services.AddScoped<IReportingService, ReportingService>();
 builder.Services.AddScoped<IDisasterRecoveryService, DisasterRecoveryService>();
 
+// Phase 4: Testing and deployment services
+builder.Services.AddScoped<ITestingService, TestingService>();
+builder.Services.AddScoped<IPerformanceTestingService, PerformanceTestingService>();
+builder.Services.AddScoped<ISecurityTestingService, SecurityTestingService>();
+builder.Services.AddScoped<IProductionDeploymentService, ProductionDeploymentService>();
+builder.Services.AddScoped<IProductionMonitoringService, ProductionMonitoringService>();
+builder.Services.AddScoped<IQualityAssuranceService, QualityAssuranceService>();
+
 // Register background services
 builder.Services.AddHostedService<EmailOutboxWorker>();
 builder.Services.AddHostedService<MonitoringSchedulerService>();

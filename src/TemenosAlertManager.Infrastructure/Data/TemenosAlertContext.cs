@@ -40,6 +40,15 @@ public class TemenosAlertContext : DbContext
     public DbSet<WorkflowExecution> WorkflowExecutions { get; set; }
     public DbSet<Core.Entities.OptimizationRecommendation> OptimizationRecommendations { get; set; }
 
+    // Phase 4 entities
+    public DbSet<TestExecution> TestExecutions { get; set; }
+    public DbSet<PerformanceTestResult> PerformanceTestResults { get; set; }
+    public DbSet<SecurityScanResult> SecurityScanResults { get; set; }
+    public DbSet<Deployment> Deployments { get; set; }
+    public DbSet<ProductionIncident> ProductionIncidents { get; set; }
+    public DbSet<MaintenanceWindow> MaintenanceWindows { get; set; }
+    public DbSet<QualityGate> QualityGates { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
