@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Hangfire;
 using Hangfire.SqlServer;
+using Hangfire.InMemory;
 using TemenosAlertManager.Infrastructure.Data;
 using TemenosAlertManager.Infrastructure.Repositories;
 using TemenosAlertManager.Infrastructure.Services;
@@ -26,8 +27,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure Entity Framework
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<TemenosAlertContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (connectionString?.Contains(":memory:") == true || builder.Environment.IsDevelopment())
+    {
+        options.UseSqlite("Data Source=:memory:");
+    }
+    else
+    {
+        options.UseSqlServer(connectionString);
+    }
+});
 
 // Configure Windows Authentication
 builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
@@ -56,18 +67,29 @@ builder.Services.AddHostedService<EmailOutboxWorker>();
 builder.Services.AddHostedService<MonitoringSchedulerService>();
 
 // Configure Hangfire
-builder.Services.AddHangfire(configuration => configuration
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+builder.Services.AddHangfire(configuration =>
+{
+    configuration
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings();
+    
+    if (connectionString?.Contains(":memory:") == true || builder.Environment.IsDevelopment())
     {
-        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-        QueuePollInterval = TimeSpan.Zero,
-        UseRecommendedIsolationLevel = true,
-        DisableGlobalLocks = true
-    }));
+        configuration.UseInMemoryStorage();
+    }
+    else
+    {
+        configuration.UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.Zero,
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true
+        });
+    }
+});
 
 builder.Services.AddHangfireServer();
 
