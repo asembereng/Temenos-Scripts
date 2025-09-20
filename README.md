@@ -46,6 +46,17 @@ The Temenos Alert Manager supports both co-located and distributed deployment pa
 
 For detailed remote deployment guidance, see [Remote Deployment Guide](docs/RemoteDeploymentGuide.md).
 
+## Temenos Service Management Research
+
+📋 **Comprehensive research and implementation planning for Temenos Start of Day (SOD) and End of Day (EOD) service management:**
+
+- **[Executive Summary](docs/EXECUTIVE_SUMMARY.md)** - High-level overview and business case for implementation
+- **[Detailed Research](docs/TEMENOS_SOD_EOD_RESEARCH.md)** - In-depth analysis of Temenos SOD/EOD procedures, best practices, and challenges
+- **[Implementation Specification](docs/IMPLEMENTATION_SPECIFICATION.md)** - Complete technical specifications for development
+- **[Operations Quick Reference](docs/TEMENOS_OPERATIONS_QUICK_REFERENCE.md)** - Practical guide for common Temenos operations
+
+These documents provide comprehensive guidance for implementing automated service management capabilities for Temenos banking systems, including critical Start of Day and End of Day operations with proper risk management and regulatory compliance considerations.
+
 ### Security Model
 - **Authentication**: Windows Authentication (Kerberos/NTLM)
 - **Authorization**: Three-tier RBAC (Viewer, Operator, Admin)
