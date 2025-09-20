@@ -1,0 +1,12 @@
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/bin/Debug/net8.0/TemenosAlertManager.Core.deps.json
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/bin/Debug/net8.0/TemenosAlertManager.Core.dll
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/bin/Debug/net8.0/TemenosAlertManager.Core.pdb
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/TemenosAlertManager.Core.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/TemenosAlertManager.Core.AssemblyInfoInputs.cache
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/TemenosAlertManager.Core.AssemblyInfo.cs
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/TemenosAlertManager.Core.csproj.CoreCompileInputs.cache
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/TemenosAlertManager.Core.sourcelink.json
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/TemenosAlertManager.Core.dll
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/refint/TemenosAlertManager.Core.dll
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/TemenosAlertManager.Core.pdb
+/home/runner/work/Temenos-Scripts/Temenos-Scripts/src/TemenosAlertManager.Core/obj/Debug/net8.0/ref/TemenosAlertManager.Core.dll

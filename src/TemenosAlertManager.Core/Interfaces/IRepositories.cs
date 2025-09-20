@@ -1,0 +1,57 @@
+using TemenosAlertManager.Core.Entities;
+using TemenosAlertManager.Core.Entities.Configuration;
+
+namespace TemenosAlertManager.Core.Interfaces;
+
+public interface IRepository<T> where T : BaseEntity
+{
+    Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<T>> FindAsync(System.Linq.Expressions.Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
+    Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
+    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<int> CountAsync(System.Linq.Expressions.Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
+}
+
+public interface IAlertRepository : IRepository<Alert>
+{
+    Task<IEnumerable<Alert>> GetActiveAlertsAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Alert>> GetAlertsByFingerprintAsync(string fingerprint, DateTime? since = null, CancellationToken cancellationToken = default);
+    Task<Alert?> GetLatestAlertByFingerprintAsync(string fingerprint, CancellationToken cancellationToken = default);
+}
+
+public interface IAlertOutboxRepository : IRepository<AlertOutbox>
+{
+    Task<IEnumerable<AlertOutbox>> GetPendingAlertsAsync(int maxAttempts = 5, CancellationToken cancellationToken = default);
+    Task<IEnumerable<AlertOutbox>> GetRetryableAlertsAsync(CancellationToken cancellationToken = default);
+}
+
+public interface ICheckResultRepository : IRepository<CheckResult>
+{
+    Task<IEnumerable<CheckResult>> GetLatestResultsByDomainAsync(string domain, int limit = 100, CancellationToken cancellationToken = default);
+    Task<IEnumerable<CheckResult>> GetResultsByRunIdAsync(string runId, CancellationToken cancellationToken = default);
+}
+
+public interface IConfigurationRepository
+{
+    Task<IEnumerable<ServiceConfig>> GetServiceConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
+    Task<IEnumerable<QueueConfig>> GetQueueConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SqlTargetConfig>> GetSqlTargetConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
+    Task<IEnumerable<AuthConfig>> GetAuthConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
+    Task<IEnumerable<AlertConfig>> GetAlertConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
+}
+
+public interface IUnitOfWork : IDisposable
+{
+    IAlertRepository Alerts { get; }
+    IAlertOutboxRepository AlertOutbox { get; }
+    ICheckResultRepository CheckResults { get; }
+    IRepository<AuditEvent> AuditEvents { get; }
+    IConfigurationRepository Configuration { get; }
+    
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task BeginTransactionAsync(CancellationToken cancellationToken = default);
+    Task CommitTransactionAsync(CancellationToken cancellationToken = default);
+    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+}
