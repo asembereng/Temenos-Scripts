@@ -1,0 +1,269 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=SQL-MGMT01.bank.local;Database=TemenosAlertManager;Trusted_Connection=true;MultipleActiveResultSets=true;Encrypt=true;TrustServerCertificate=true"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning",
+      "TemenosAlertManager": "Debug"
+    }
+  },
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File", "Serilog.Sinks.EventLog"],
+    "MinimumLevel": "Information",
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "C:\\Logs\\TemenosAlertManager\\temenos-alert-manager-.log",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 90,
+          "fileSizeLimitBytes": 52428800
+        }
+      },
+      {
+        "Name": "EventLog",
+        "Args": {
+          "source": "TemenosAlertManager",
+          "logName": "Application"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext", "WithMachineName", "WithEnvironmentUserName"],
+    "Properties": {
+      "Application": "TemenosAlertManager",
+      "Environment": "Production"
+    }
+  },
+  "AllowedHosts": "monitor.bank.local;*.bank.local",
+  
+  // PRODUCTION REMOTE DEPLOYMENT CONFIGURATION
+  // ==========================================
+  "PowerShell": {
+    "ModuleBasePath": "C:\\Program Files\\TemenosAlertManager\\PowerShell\\Modules",
+    
+    // Remote execution settings for production environment
+    "RemoteExecutionTimeoutSeconds": 600,
+    "MaxConcurrentRemoteSessions": 20,
+    "UseSecureRemoting": true,
+    "RemotingPort": 5986,
+    
+    // Retry settings for unreliable network connections
+    "MaxRetryAttempts": 3,
+    "RetryDelaySeconds": 30,
+    
+    // Session management
+    "SessionPoolSize": 10,
+    "SessionIdleTimeoutMinutes": 15
+  },
+  
+  // EMAIL CONFIGURATION FOR PRODUCTION ALERTS
+  // =========================================
+  "Email": {
+    "Smtp": {
+      "Host": "smtp-relay.bank.local",
+      "Port": "587",
+      "EnableSsl": "true",
+      "Username": "svc-temenos-alerts@bank.local",
+      "Password": "ENCRYPTED_PASSWORD_HERE"
+    },
+    "FromAddress": "temenos-alerts@bank.local",
+    "FromName": "Temenos Production Alert Manager",
+    "IncludeSourceHost": true,
+    
+    // Production email settings
+    "AlertEmailTemplates": {
+      "Critical": "CriticalAlert.html",
+      "Warning": "WarningAlert.html",
+      "Recovery": "RecoveryAlert.html"
+    }
+  },
+  
+  // APPLICATION CONFIGURATION
+  // =========================
+  "Application": {
+    "DashboardUrl": "https://monitor.bank.local",
+    "Environment": "Production",
+    "DataCenter": "Primary-DC",
+    "Region": "US-East",
+    
+    // Timeouts for production environment
+    "RemoteCheckTimeoutMs": 60000,
+    "DatabaseQueryTimeoutSeconds": 120,
+    
+    // Feature flags
+    "EnableDetailedLogging": true,
+    "EnablePerformanceCounters": true,
+    "EnableHealthChecks": true
+  },
+  
+  // CORS CONFIGURATION FOR PRODUCTION UI
+  // ===================================
+  "Cors": {
+    "AllowedOrigins": [
+      "https://monitor.bank.local",
+      "https://dashboard.bank.local"
+    ]
+  },
+  
+  // AUTHENTICATION AND SECURITY
+  // ============================
+  "Authentication": {
+    "WindowsAuthentication": {
+      "Enabled": true,
+      "Domain": "BANK"
+    },
+    "RequireHttps": true,
+    "CookieSecure": true
+  },
+  
+  // HANGFIRE BACKGROUND JOBS
+  // =========================
+  "Hangfire": {
+    "DashboardPath": "/hangfire",
+    "StatsPollingInterval": 2000,
+    "WorkerCount": 5,
+    
+    // Job schedules for production monitoring
+    "MonitoringSchedule": {
+      "TphServiceChecks": "*/2 * * * *",
+      "T24ServiceChecks": "*/3 * * * *", 
+      "MqConnectivityChecks": "*/1 * * * *",
+      "SqlServerChecks": "*/5 * * * *",
+      "CleanupOldData": "0 2 * * *"
+    }
+  },
+  
+  // MONITORING TARGET CONFIGURATION
+  // ===============================
+  // These would typically be stored in database, shown here for reference
+  "MonitoringTargets": {
+    "TPH": {
+      "ProductionServers": [
+        {
+          "Name": "TPH-PROD01",
+          "Host": "tph-prod01.bank.local",
+          "Environment": "Production",
+          "Services": ["TPHPaymentService", "TPHProcessingService", "TPHGatewayService"],
+          "CredentialName": "TPH-Monitor-Prod",
+          "Thresholds": {
+            "ServiceResponseTimeMs": 5000,
+            "ErrorRatePercentage": 2.0
+          }
+        },
+        {
+          "Name": "TPH-PROD02", 
+          "Host": "tph-prod02.bank.local",
+          "Environment": "Production",
+          "Services": ["TPHPaymentService", "TPHProcessingService", "TPHGatewayService"],
+          "CredentialName": "TPH-Monitor-Prod"
+        }
+      ]
+    },
+    
+    "T24": {
+      "ProductionServers": [
+        {
+          "Name": "T24-APP01",
+          "Host": "t24-app01.bank.local", 
+          "Environment": "Production",
+          "Services": ["T24Server", "T24Agent", "T24WebService"],
+          "CredentialName": "T24-Monitor-Prod",
+          "COBSchedule": "0 23 * * *"
+        },
+        {
+          "Name": "T24-APP02",
+          "Host": "t24-app02.bank.local",
+          "Environment": "Production", 
+          "Services": ["T24Server", "T24Agent", "T24WebService"],
+          "CredentialName": "T24-Monitor-Prod"
+        }
+      ]
+    },
+    
+    "MQ": {
+      "ProductionQueueManagers": [
+        {
+          "Name": "PROD-QM01",
+          "Host": "mq-prod01.bank.local",
+          "QueueManager": "PROD.QM",
+          "Environment": "Production",
+          "Services": ["IBM MQ"],
+          "CredentialName": "MQ-Monitor-Prod",
+          "CriticalQueues": ["T24.PAYMENT.IN", "TPH.TRANSACTION.OUT", "SWIFT.MESSAGE.QUEUE"]
+        },
+        {
+          "Name": "PROD-QM02",
+          "Host": "mq-prod02.bank.local", 
+          "QueueManager": "PROD.QM.BACKUP",
+          "Environment": "Production",
+          "Services": ["IBM MQ"],
+          "CredentialName": "MQ-Monitor-Prod"
+        }
+      ]
+    },
+    
+    "SQL": {
+      "ProductionInstances": [
+        {
+          "Name": "SQL-PROD01",
+          "Host": "sql-prod01.bank.local",
+          "Instance": "MSSQLSERVER",
+          "Role": "Primary",
+          "Environment": "Production",
+          "Databases": ["T24_PROD", "TPH_PROD", "REPORTING"],
+          "CredentialName": "SQL-Monitor-Prod",
+          "AlwaysOnGroup": "T24-AG"
+        },
+        {
+          "Name": "SQL-PROD02",
+          "Host": "sql-prod02.bank.local",
+          "Instance": "MSSQLSERVER", 
+          "Role": "Secondary",
+          "Environment": "Production",
+          "Databases": ["T24_PROD", "TPH_PROD", "REPORTING"],
+          "CredentialName": "SQL-Monitor-Prod",
+          "AlwaysOnGroup": "T24-AG"
+        }
+      ]
+    }
+  },
+  
+  // DISASTER RECOVERY CONFIGURATION
+  // ===============================
+  "DisasterRecovery": {
+    "Enabled": true,
+    "DRSite": {
+      "DataCenter": "DR-DC",
+      "MonitoringEnabled": false,
+      "FailoverThresholds": {
+        "ConsecutiveFailures": 5,
+        "TimeoutMinutes": 10
+      }
+    }
+  },
+  
+  // PERFORMANCE AND DIAGNOSTICS
+  // ===========================
+  "Performance": {
+    "EnableMetrics": true,
+    "MetricsRetentionDays": 90,
+    "EnableTracing": true,
+    "SamplingRatio": 0.1
+  },
+  
+  // COMPLIANCE AND AUDITING
+  // =======================
+  "Compliance": {
+    "AuditLogging": {
+      "Enabled": true,
+      "RetentionDays": 2555, // 7 years
+      "IncludePayloadHashing": true
+    },
+    "EncryptionRequired": true,
+    "DataClassification": "Confidential"
+  }
+}

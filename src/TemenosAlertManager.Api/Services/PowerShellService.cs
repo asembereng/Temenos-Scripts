@@ -4,12 +4,45 @@ using TemenosAlertManager.Core.Enums;
 
 namespace TemenosAlertManager.Api.Services;
 
+/// <summary>
+/// PowerShell Service for Remote Temenos System Monitoring
+/// 
+/// This service orchestrates PowerShell-based monitoring of distributed Temenos environments.
+/// Supports executing monitoring commands on remote hosts where T24, TPH, MQ, and SQL systems are deployed.
+/// 
+/// REMOTE DEPLOYMENT CAPABILITIES:
+/// - Execute monitoring modules on target Temenos hosts via PowerShell remoting
+/// - Handle authentication and session management for distributed systems
+/// - Provide consistent error handling and logging across remote connections
+/// - Support timeout and cancellation for reliable operations
+/// 
+/// ARCHITECTURE CONSIDERATIONS:
+/// - PowerShell modules are loaded locally on Alert Manager host
+/// - Actual monitoring commands execute on target Temenos hosts
+/// - Results are serialized back to Alert Manager for processing
+/// - Credentials and sessions are managed securely
+/// </summary>
 public interface IPowerShellService
 {
+    /// <summary>
+    /// Execute a monitoring check on local or remote Temenos system
+    /// </summary>
+    /// <param name="moduleName">PowerShell module name (e.g., "TemenosChecks.TPH")</param>
+    /// <param name="functionName">Function to execute (e.g., "Test-TphServices")</param>
+    /// <param name="parameters">Parameters including target host information</param>
+    /// <param name="cancellationToken">Cancellation support for long-running operations</param>
+    /// <returns>Monitoring check result</returns>
     Task<ICheckResult> ExecuteCheckAsync(string moduleName, string functionName, Dictionary<string, object> parameters, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Execute arbitrary PowerShell script on local or remote system
+    /// </summary>
     Task<object?> ExecuteScriptAsync(string scriptPath, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// Implementation of PowerShell service with remote deployment support
+/// </summary>
 public class PowerShellService : IPowerShellService
 {
     private readonly ILogger<PowerShellService> _logger;
@@ -18,38 +51,90 @@ public class PowerShellService : IPowerShellService
     public PowerShellService(ILogger<PowerShellService> logger, IConfiguration configuration)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        
+        // Load PowerShell module path from configuration
+        // Modules are stored locally on Alert Manager host but execute remotely
         _moduleBasePath = configuration["PowerShell:ModuleBasePath"] ?? "/scripts/PowerShell/Modules";
+        
+        _logger.LogInformation("PowerShell Service initialized with module path: {ModuleBasePath}", _moduleBasePath);
     }
 
+    /// <summary>
+    /// Execute a monitoring check on local or remote Temenos system
+    /// 
+    /// This method coordinates the execution of PowerShell-based monitoring checks across distributed
+    /// Temenos environments. The monitoring modules handle remote execution internally using PowerShell remoting.
+    /// 
+    /// REMOTE EXECUTION FLOW:
+    /// 1. Load monitoring module on local Alert Manager host
+    /// 2. Module functions handle remote connections to target Temenos systems
+    /// 3. Monitoring commands execute on target hosts via PowerShell remoting
+    /// 4. Results are returned to Alert Manager for processing and alerting
+    /// 
+    /// PARAMETER EXPECTATIONS:
+    /// - ServerName/Host: Target Temenos system hostname or IP
+    /// - Credential: Authentication for remote systems (optional)
+    /// - Module-specific parameters: Thresholds, service names, etc.
+    /// 
+    /// ERROR HANDLING:
+    /// - Network connectivity issues to remote hosts
+    /// - Authentication failures on target systems
+    /// - PowerShell remoting configuration problems
+    /// - Module-specific execution errors
+    /// </summary>
     public async Task<ICheckResult> ExecuteCheckAsync(string moduleName, string functionName, Dictionary<string, object> parameters, CancellationToken cancellationToken = default)
     {
         try
         {
-            _logger.LogDebug("Executing PowerShell check: {ModuleName}.{FunctionName}", moduleName, functionName);
+            // Extract target information for logging
+            var targetHost = parameters.ContainsKey("ServerName") ? parameters["ServerName"]?.ToString() : 
+                           parameters.ContainsKey("Host") ? parameters["Host"]?.ToString() : "localhost";
+            
+            _logger.LogDebug("Executing PowerShell check: {ModuleName}.{FunctionName} on target: {TargetHost}", 
+                moduleName, functionName, targetHost);
 
             using var powerShell = PowerShell.Create();
             
-            // Import the module
+            // STEP 1: Import monitoring module on Alert Manager host
+            // Module contains functions that handle remote connections internally
             var modulePath = Path.Combine(_moduleBasePath, moduleName, $"{moduleName}.psm1");
+            
+            if (!File.Exists(modulePath))
+            {
+                var error = $"PowerShell module not found: {modulePath}";
+                _logger.LogError(error);
+                return new CheckResult(MonitoringDomain.Host, targetHost ?? "unknown", functionName, 
+                    CheckStatus.Error, null, null, error, 0);
+            }
+            
+            _logger.LogDebug("Loading PowerShell module: {ModulePath}", modulePath);
             powerShell.AddCommand("Import-Module").AddParameter("Name", modulePath);
             await powerShell.InvokeAsync();
 
-            // Clear any previous commands and add the function call
+            // STEP 2: Prepare function call with parameters
+            // Parameters include target host information for remote execution
             powerShell.Commands.Clear();
             powerShell.AddCommand(functionName);
 
-            // Add parameters
+            // Add all parameters - monitoring modules will handle remote execution
             foreach (var parameter in parameters)
             {
+                _logger.LogDebug("Adding parameter: {Key} = {Value}", parameter.Key, 
+                    parameter.Key.ToLower().Contains("credential") ? "[CREDENTIAL]" : parameter.Value);
                 powerShell.AddParameter(parameter.Key, parameter.Value);
             }
 
+            // STEP 3: Execute monitoring function
+            // Function handles remote connection and execution internally
+            _logger.LogDebug("Executing monitoring function: {FunctionName}", functionName);
             var results = await powerShell.InvokeAsync();
             
+            // STEP 4: Handle execution results and errors
             if (powerShell.HadErrors)
             {
                 var errors = string.Join("; ", powerShell.Streams.Error.Select(e => e.ToString()));
-                _logger.LogError("PowerShell execution failed: {Errors}", errors);
+                _logger.LogError("PowerShell execution failed for {ModuleName}.{FunctionName} on {TargetHost}: {Errors}", 
+                    moduleName, functionName, targetHost, errors);
                 
                 return new CheckResult(MonitoringDomain.Host, "PowerShell", functionName, CheckStatus.Error, null, null, errors, 0);
             }
