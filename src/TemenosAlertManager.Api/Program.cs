@@ -61,6 +61,12 @@ builder.Services.AddScoped<IEODOrchestrator, EODOrchestrator>();
 builder.Services.AddScoped<IDependencyManager, DependencyManager>();
 builder.Services.AddSingleton<IOperationMonitor, OperationMonitor>();
 
+// Phase 3: Advanced features services
+builder.Services.AddScoped<IOperationScheduler, OperationScheduler>();
+builder.Services.AddScoped<IPerformanceOptimizer, PerformanceOptimizer>();
+builder.Services.AddScoped<IReportingService, ReportingService>();
+builder.Services.AddScoped<IDisasterRecoveryService, DisasterRecoveryService>();
+
 // Register background services
 builder.Services.AddHostedService<EmailOutboxWorker>();
 builder.Services.AddHostedService<MonitoringSchedulerService>();

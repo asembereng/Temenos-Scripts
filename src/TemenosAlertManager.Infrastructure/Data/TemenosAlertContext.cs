@@ -29,6 +29,17 @@ public class TemenosAlertContext : DbContext
     public DbSet<AlertConfig> AlertConfigs { get; set; }
     public DbSet<SystemConfig> SystemConfigs { get; set; }
 
+    // Phase 3 entities
+    public DbSet<ScheduledOperation> ScheduledOperations { get; set; }
+    public DbSet<PerformanceBaseline> PerformanceBaselines { get; set; }
+    public DbSet<Core.Entities.PerformanceThreshold> PerformanceThresholds { get; set; }
+    public DbSet<GeneratedReport> GeneratedReports { get; set; }
+    public DbSet<DRCheckpoint> DRCheckpoints { get; set; }
+    public DbSet<DRTest> DRTests { get; set; }
+    public DbSet<AutomationWorkflow> AutomationWorkflows { get; set; }
+    public DbSet<WorkflowExecution> WorkflowExecutions { get; set; }
+    public DbSet<Core.Entities.OptimizationRecommendation> OptimizationRecommendations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -57,6 +57,44 @@ public class UnitOfWork : IUnitOfWork
     public IServiceConfigRepository ServiceConfigs => 
         _serviceConfigs ??= new ServiceConfigRepository(_context);
 
+    // Phase 3 repositories
+    private IRepository<ScheduledOperation>? _scheduledOperations;
+    private IRepository<PerformanceBaseline>? _performanceBaselines;
+    private IRepository<Core.Entities.PerformanceThreshold>? _performanceThresholds;
+    private IRepository<GeneratedReport>? _generatedReports;
+    private IRepository<DRCheckpoint>? _drCheckpoints;
+    private IRepository<DRTest>? _drTests;
+    private IRepository<AutomationWorkflow>? _automationWorkflows;
+    private IRepository<WorkflowExecution>? _workflowExecutions;
+    private IRepository<Core.Entities.OptimizationRecommendation>? _optimizationRecommendations;
+
+    public IRepository<ScheduledOperation> ScheduledOperations => 
+        _scheduledOperations ??= new Repository<ScheduledOperation>(_context);
+
+    public IRepository<PerformanceBaseline> PerformanceBaselines => 
+        _performanceBaselines ??= new Repository<PerformanceBaseline>(_context);
+
+    public IRepository<Core.Entities.PerformanceThreshold> PerformanceThresholds => 
+        _performanceThresholds ??= new Repository<Core.Entities.PerformanceThreshold>(_context);
+
+    public IRepository<GeneratedReport> GeneratedReports => 
+        _generatedReports ??= new Repository<GeneratedReport>(_context);
+
+    public IRepository<DRCheckpoint> DRCheckpoints => 
+        _drCheckpoints ??= new Repository<DRCheckpoint>(_context);
+
+    public IRepository<DRTest> DRTests => 
+        _drTests ??= new Repository<DRTest>(_context);
+
+    public IRepository<AutomationWorkflow> AutomationWorkflows => 
+        _automationWorkflows ??= new Repository<AutomationWorkflow>(_context);
+
+    public IRepository<WorkflowExecution> WorkflowExecutions => 
+        _workflowExecutions ??= new Repository<WorkflowExecution>(_context);
+
+    public IRepository<Core.Entities.OptimizationRecommendation> OptimizationRecommendations => 
+        _optimizationRecommendations ??= new Repository<Core.Entities.OptimizationRecommendation>(_context);
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await _context.SaveChangesAsync(cancellationToken);

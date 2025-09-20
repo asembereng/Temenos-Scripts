@@ -77,6 +77,17 @@ public interface IUnitOfWork : IDisposable
     ISODEODOperationRepository SODEODOperations { get; }
     IOperationStepRepository OperationSteps { get; }
     IServiceActionRepository ServiceActions { get; }
+    
+    // Phase 3 repositories
+    IRepository<ScheduledOperation> ScheduledOperations { get; }
+    IRepository<PerformanceBaseline> PerformanceBaselines { get; }
+    IRepository<Core.Entities.PerformanceThreshold> PerformanceThresholds { get; }
+    IRepository<GeneratedReport> GeneratedReports { get; }
+    IRepository<DRCheckpoint> DRCheckpoints { get; }
+    IRepository<DRTest> DRTests { get; }
+    IRepository<AutomationWorkflow> AutomationWorkflows { get; }
+    IRepository<WorkflowExecution> WorkflowExecutions { get; }
+    IRepository<Core.Entities.OptimizationRecommendation> OptimizationRecommendations { get; }
     IServiceConfigRepository ServiceConfigs { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
