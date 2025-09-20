@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TemenosAlertManager.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89cb1fee32ad42493939e3733d9869d9c612b585")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abff30e9788647f46cccb79f77a6d4cfd9f942e6")]
 [assembly: System.Reflection.AssemblyProductAttribute("TemenosAlertManager.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TemenosAlertManager.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

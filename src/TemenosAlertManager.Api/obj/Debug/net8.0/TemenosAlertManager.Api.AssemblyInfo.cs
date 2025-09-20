@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("TemenosAlertManager-E7F2D8A1-9B3C-4E5F-A6D7-1234567890AB")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("TemenosAlertManager.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89cb1fee32ad42493939e3733d9869d9c612b585")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abff30e9788647f46cccb79f77a6d4cfd9f942e6")]
 [assembly: System.Reflection.AssemblyProductAttribute("TemenosAlertManager.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TemenosAlertManager.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
