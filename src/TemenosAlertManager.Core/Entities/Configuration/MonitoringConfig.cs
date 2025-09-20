@@ -136,6 +136,74 @@ public class ServiceConfig : BaseEntity
     
     [StringLength(500)]
     public string? Description { get; set; }
+    
+    // SOD/EOD specific fields
+    /// <summary>
+    /// PowerShell command to execute during Start of Day operations
+    /// </summary>
+    [StringLength(500)]
+    public string? SODCommand { get; set; }
+    
+    /// <summary>
+    /// PowerShell command to execute during End of Day operations
+    /// </summary>
+    [StringLength(500)]
+    public string? EODCommand { get; set; }
+    
+    /// <summary>
+    /// Order of execution during SOD (lower numbers execute first)
+    /// </summary>
+    public int SODOrder { get; set; } = 0;
+    
+    /// <summary>
+    /// Order of execution during EOD (lower numbers execute first)
+    /// </summary>
+    public int EODOrder { get; set; } = 0;
+    
+    /// <summary>
+    /// Timeout in seconds for SOD operations
+    /// </summary>
+    public int SODTimeout { get; set; } = 300;
+    
+    /// <summary>
+    /// Timeout in seconds for EOD operations
+    /// </summary>
+    public int EODTimeout { get; set; } = 600;
+    
+    /// <summary>
+    /// Whether this service is critical for SOD operations
+    /// </summary>
+    public bool IsCriticalForSOD { get; set; } = false;
+    
+    /// <summary>
+    /// Whether this service is critical for EOD operations
+    /// </summary>
+    public bool IsCriticalForEOD { get; set; } = false;
+    
+    /// <summary>
+    /// JSON array of service IDs this service depends on for SOD
+    /// </summary>
+    public string? SODDependencies { get; set; }
+    
+    /// <summary>
+    /// JSON array of service IDs this service depends on for EOD
+    /// </summary>
+    public string? EODDependencies { get; set; }
+    
+    /// <summary>
+    /// Whether this service can be executed in parallel with others
+    /// </summary>
+    public bool AllowParallelExecution { get; set; } = true;
+    
+    /// <summary>
+    /// Whether this service requires manual confirmation before execution
+    /// </summary>
+    public bool RequiresManualConfirmation { get; set; } = false;
+    
+    /// <summary>
+    /// Navigation property for service actions
+    /// </summary>
+    public virtual ICollection<ServiceAction> ServiceActions { get; set; } = new List<ServiceAction>();
 }
 
 public class QueueConfig : BaseEntity

@@ -1,5 +1,6 @@
 using TemenosAlertManager.Core.Entities;
 using TemenosAlertManager.Core.Enums;
+using TemenosAlertManager.Core.Models;
 
 namespace TemenosAlertManager.Core.Interfaces;
 
@@ -48,4 +49,66 @@ public interface IAuditService
 {
     Task LogEventAsync(string userId, string userName, string action, string resource, object? payload = null, string? ipAddress = null, string? userAgent = null, CancellationToken cancellationToken = default);
     Task LogFailureAsync(string userId, string userName, string action, string resource, string errorMessage, string? ipAddress = null, string? userAgent = null, CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// Service for managing Temenos SOD/EOD operations
+/// </summary>
+public interface ITemenosOperationService
+{
+    /// <summary>
+    /// Start a Start of Day operation
+    /// </summary>
+    Task<OperationResultDto> StartSODAsync(SODRequest request, string initiatedBy, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Start an End of Day operation
+    /// </summary>
+    Task<OperationResultDto> StartEODAsync(EODRequest request, string initiatedBy, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Get status of a specific operation
+    /// </summary>
+    Task<OperationStatusDto> GetOperationStatusAsync(string operationId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Cancel a running operation
+    /// </summary>
+    Task<OperationResultDto> CancelOperationAsync(string operationId, string cancelledBy, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Get list of recent operations
+    /// </summary>
+    Task<PagedResult<OperationSummaryDto>> GetOperationsAsync(int page = 1, int pageSize = 20, CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// Service for managing individual service actions
+/// </summary>
+public interface IServiceManagementService
+{
+    /// <summary>
+    /// Start a service
+    /// </summary>
+    Task<ServiceActionResultDto> StartServiceAsync(int serviceId, string initiatedBy, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Stop a service
+    /// </summary>
+    Task<ServiceActionResultDto> StopServiceAsync(int serviceId, string initiatedBy, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Restart a service
+    /// </summary>
+    Task<ServiceActionResultDto> RestartServiceAsync(int serviceId, string initiatedBy, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Get comprehensive status of all services
+    /// </summary>
+    Task<ServiceStatusSummaryDto> GetServicesStatusAsync(string? domain = null, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Get action history for a specific service
+    /// </summary>
+    Task<PagedResult<ServiceActionDto>> GetServiceActionsAsync(int serviceId, PagingDto paging, CancellationToken cancellationToken = default);
 }
