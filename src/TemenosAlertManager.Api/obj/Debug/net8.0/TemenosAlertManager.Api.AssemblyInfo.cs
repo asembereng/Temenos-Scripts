@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TemenosAlertManager.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+abff30e9788647f46cccb79f77a6d4cfd9f942e6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0ac6805ee8bb05547f38fb304ee4aac9d88e9793")]
 [assembly: System.Reflection.AssemblyProductAttribute("TemenosAlertManager.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TemenosAlertManager.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

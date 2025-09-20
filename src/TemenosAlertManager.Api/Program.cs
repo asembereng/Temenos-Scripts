@@ -9,6 +9,7 @@ using TemenosAlertManager.Infrastructure.Services;
 using TemenosAlertManager.Core.Interfaces;
 using TemenosAlertManager.Api.Security;
 using TemenosAlertManager.Api.Services;
+using TemenosAlertManager.Api.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,11 @@ builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IActiveDirectoryService, ActiveDirectoryService>();
 builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IPowerShellService, PowerShellService>();
+builder.Services.AddScoped<IMonitoringJobService, MonitoringJobService>();
+
+// Register background services
+builder.Services.AddHostedService<EmailOutboxWorker>();
+builder.Services.AddHostedService<MonitoringSchedulerService>();
 
 // Configure Hangfire
 builder.Services.AddHangfire(configuration => configuration
