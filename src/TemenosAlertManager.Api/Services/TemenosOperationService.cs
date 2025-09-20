@@ -5,26 +5,32 @@ using TemenosAlertManager.Core.Models;
 namespace TemenosAlertManager.Api.Services;
 
 /// <summary>
-/// Service for managing Temenos SOD/EOD operations
+/// Enhanced service for managing Temenos SOD/EOD operations with orchestration
 /// </summary>
 public class TemenosOperationService : ITemenosOperationService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IPowerShellService _powerShellService;
+    private readonly ISODOrchestrator _sodOrchestrator;
+    private readonly IEODOrchestrator _eodOrchestrator;
+    private readonly IAuditService _auditService;
     private readonly ILogger<TemenosOperationService> _logger;
 
     public TemenosOperationService(
         IUnitOfWork unitOfWork,
-        IPowerShellService powerShellService,
+        ISODOrchestrator sodOrchestrator,
+        IEODOrchestrator eodOrchestrator,
+        IAuditService auditService,
         ILogger<TemenosOperationService> logger)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _powerShellService = powerShellService ?? throw new ArgumentNullException(nameof(powerShellService));
+        _sodOrchestrator = sodOrchestrator ?? throw new ArgumentNullException(nameof(sodOrchestrator));
+        _eodOrchestrator = eodOrchestrator ?? throw new ArgumentNullException(nameof(eodOrchestrator));
+        _auditService = auditService ?? throw new ArgumentNullException(nameof(auditService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
-    /// Start a Start of Day operation
+    /// Start a Start of Day operation using enhanced orchestration
     /// </summary>
     public async Task<OperationResultDto> StartSODAsync(SODRequest request, string initiatedBy, CancellationToken cancellationToken = default)
     {
@@ -33,7 +39,7 @@ public class TemenosOperationService : ITemenosOperationService
 
         try
         {
-            _logger.LogInformation("Starting SOD operation {OperationId} for environment {Environment} by {User}", 
+            _logger.LogInformation("Starting enhanced SOD operation {OperationId} for environment {Environment} by {User}", 
                 operationId, request.Environment, initiatedBy);
 
             // Create operation record
@@ -54,35 +60,28 @@ public class TemenosOperationService : ITemenosOperationService
             await _unitOfWork.SODEODOperations.AddAsync(operation, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // Start PowerShell operation asynchronously
+            // Audit the operation initiation
+            await _auditService.LogEventAsync(initiatedBy, initiatedBy, "SOD_OPERATION_INITIATED", 
+                $"OperationId:{operationId},Environment:{request.Environment}", request, cancellationToken: cancellationToken);
+
+            // Execute SOD using the orchestrator asynchronously
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    operation.Status = "Running";
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                    var result = await _powerShellService.ExecuteSODAsync(
-                        request.Environment, 
-                        request.ServicesFilter ?? Array.Empty<string>(), 
-                        request.DryRun, 
-                        operationId, 
-                        cancellationToken);
-
-                    operation.Status = "Completed";
-                    operation.EndTime = DateTime.UtcNow;
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                    _logger.LogInformation("SOD operation {OperationId} completed successfully", operationId);
+                    await _sodOrchestrator.ExecuteSODAsync(request, operationId, cancellationToken);
+                    
+                    await _auditService.LogEventAsync(initiatedBy, initiatedBy, "SOD_OPERATION_COMPLETED", 
+                        $"OperationId:{operationId}", null, cancellationToken: cancellationToken);
+                    
+                    _logger.LogInformation("Enhanced SOD operation {OperationId} completed successfully", operationId);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "SOD operation {OperationId} failed", operationId);
+                    _logger.LogError(ex, "Enhanced SOD operation {OperationId} failed", operationId);
                     
-                    operation.Status = "Failed";
-                    operation.EndTime = DateTime.UtcNow;
-                    operation.ErrorDetails = ex.ToString();
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _auditService.LogFailureAsync(initiatedBy, initiatedBy, "SOD_OPERATION_FAILED", 
+                        $"OperationId:{operationId}", ex.Message, cancellationToken: cancellationToken);
                 }
             }, cancellationToken);
 
@@ -90,20 +89,24 @@ public class TemenosOperationService : ITemenosOperationService
             {
                 OperationId = operationId,
                 Status = "Initiated",
-                Message = "SOD operation has been initiated successfully",
+                Message = "Enhanced SOD operation has been initiated with orchestration",
                 StartTime = startTime,
-                EstimatedDurationMinutes = 15 // Estimated duration for SOD
+                EstimatedDurationMinutes = 15
             };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to initiate SOD operation for environment {Environment}", request.Environment);
+            _logger.LogError(ex, "Failed to initiate enhanced SOD operation for environment {Environment}", request.Environment);
+            
+            await _auditService.LogFailureAsync(initiatedBy, initiatedBy, "SOD_OPERATION_INIT_FAILED", 
+                $"Environment:{request.Environment}", ex.Message, cancellationToken: cancellationToken);
+            
             throw;
         }
     }
 
     /// <summary>
-    /// Start an End of Day operation
+    /// Start an End of Day operation using enhanced orchestration
     /// </summary>
     public async Task<OperationResultDto> StartEODAsync(EODRequest request, string initiatedBy, CancellationToken cancellationToken = default)
     {
@@ -112,7 +115,7 @@ public class TemenosOperationService : ITemenosOperationService
 
         try
         {
-            _logger.LogInformation("Starting EOD operation {OperationId} for environment {Environment} by {User}", 
+            _logger.LogInformation("Starting enhanced EOD operation {OperationId} for environment {Environment} by {User}", 
                 operationId, request.Environment, initiatedBy);
 
             // Create operation record
@@ -133,36 +136,28 @@ public class TemenosOperationService : ITemenosOperationService
             await _unitOfWork.SODEODOperations.AddAsync(operation, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            // Start PowerShell operation asynchronously
+            // Audit the operation initiation
+            await _auditService.LogEventAsync(initiatedBy, initiatedBy, "EOD_OPERATION_INITIATED", 
+                $"OperationId:{operationId},Environment:{request.Environment}", request, cancellationToken: cancellationToken);
+
+            // Execute EOD using the orchestrator asynchronously
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    operation.Status = "Running";
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                    var result = await _powerShellService.ExecuteEODAsync(
-                        request.Environment, 
-                        request.ServicesFilter ?? Array.Empty<string>(), 
-                        request.DryRun, 
-                        request.CutoffTime,
-                        operationId, 
-                        cancellationToken);
-
-                    operation.Status = "Completed";
-                    operation.EndTime = DateTime.UtcNow;
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                    _logger.LogInformation("EOD operation {OperationId} completed successfully", operationId);
+                    await _eodOrchestrator.ExecuteEODAsync(request, operationId, cancellationToken);
+                    
+                    await _auditService.LogEventAsync(initiatedBy, initiatedBy, "EOD_OPERATION_COMPLETED", 
+                        $"OperationId:{operationId}", null, cancellationToken: cancellationToken);
+                    
+                    _logger.LogInformation("Enhanced EOD operation {OperationId} completed successfully", operationId);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "EOD operation {OperationId} failed", operationId);
+                    _logger.LogError(ex, "Enhanced EOD operation {OperationId} failed", operationId);
                     
-                    operation.Status = "Failed";
-                    operation.EndTime = DateTime.UtcNow;
-                    operation.ErrorDetails = ex.ToString();
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _auditService.LogFailureAsync(initiatedBy, initiatedBy, "EOD_OPERATION_FAILED", 
+                        $"OperationId:{operationId}", ex.Message, cancellationToken: cancellationToken);
                 }
             }, cancellationToken);
 
@@ -170,14 +165,18 @@ public class TemenosOperationService : ITemenosOperationService
             {
                 OperationId = operationId,
                 Status = "Initiated",
-                Message = "EOD operation has been initiated successfully",
+                Message = "Enhanced EOD operation has been initiated with orchestration",
                 StartTime = startTime,
-                EstimatedDurationMinutes = 75 // Estimated duration for EOD
+                EstimatedDurationMinutes = 75
             };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to initiate EOD operation for environment {Environment}", request.Environment);
+            _logger.LogError(ex, "Failed to initiate enhanced EOD operation for environment {Environment}", request.Environment);
+            
+            await _auditService.LogFailureAsync(initiatedBy, initiatedBy, "EOD_OPERATION_INIT_FAILED", 
+                $"Environment:{request.Environment}", ex.Message, cancellationToken: cancellationToken);
+            
             throw;
         }
     }

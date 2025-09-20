@@ -55,6 +55,12 @@ builder.Services.AddScoped<IMonitoringJobService, MonitoringJobService>();
 builder.Services.AddScoped<ITemenosOperationService, TemenosOperationService>();
 builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
 
+// Phase 2: Advanced orchestration services
+builder.Services.AddScoped<ISODOrchestrator, SODOrchestrator>();
+builder.Services.AddScoped<IEODOrchestrator, EODOrchestrator>();
+builder.Services.AddScoped<IDependencyManager, DependencyManager>();
+builder.Services.AddSingleton<IOperationMonitor, OperationMonitor>();
+
 // Register background services
 builder.Services.AddHostedService<EmailOutboxWorker>();
 builder.Services.AddHostedService<MonitoringSchedulerService>();
