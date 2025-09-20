@@ -1,5 +1,6 @@
 using TemenosAlertManager.Core.Entities;
 using TemenosAlertManager.Core.Entities.Configuration;
+using TemenosAlertManager.Core.Models;
 
 namespace TemenosAlertManager.Core.Interfaces;
 
@@ -42,6 +43,28 @@ public interface IConfigurationRepository
     Task<IEnumerable<AlertConfig>> GetAlertConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
 }
 
+public interface ISODEODOperationRepository : IRepository<SODEODOperation>
+{
+    Task<SODEODOperation?> GetByOperationCodeAsync(string operationCode, CancellationToken cancellationToken = default);
+    Task<SODEODOperation?> GetActiveByTypeAsync(string operationType, CancellationToken cancellationToken = default);
+    Task<PagedResult<SODEODOperation>> GetPagedAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+}
+
+public interface IOperationStepRepository : IRepository<OperationStep>
+{
+    Task<IEnumerable<OperationStep>> GetByOperationIdAsync(int operationId, CancellationToken cancellationToken = default);
+}
+
+public interface IServiceActionRepository : IRepository<ServiceAction>
+{
+    Task<PagedResult<ServiceAction>> GetByServiceIdPagedAsync(int serviceId, int page, int pageSize, CancellationToken cancellationToken = default);
+}
+
+public interface IServiceConfigRepository : IRepository<ServiceConfig>
+{
+    new Task<IEnumerable<ServiceConfig>> GetAllAsync(CancellationToken cancellationToken = default);
+}
+
 public interface IUnitOfWork : IDisposable
 {
     IAlertRepository Alerts { get; }
@@ -49,6 +72,12 @@ public interface IUnitOfWork : IDisposable
     ICheckResultRepository CheckResults { get; }
     IRepository<AuditEvent> AuditEvents { get; }
     IConfigurationRepository Configuration { get; }
+    
+    // SOD/EOD repositories
+    ISODEODOperationRepository SODEODOperations { get; }
+    IOperationStepRepository OperationSteps { get; }
+    IServiceActionRepository ServiceActions { get; }
+    IServiceConfigRepository ServiceConfigs { get; }
     
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     Task BeginTransactionAsync(CancellationToken cancellationToken = default);

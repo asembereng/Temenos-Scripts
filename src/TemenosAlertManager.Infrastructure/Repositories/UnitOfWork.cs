@@ -17,6 +17,12 @@ public class UnitOfWork : IUnitOfWork
     private ICheckResultRepository? _checkResults;
     private IRepository<AuditEvent>? _auditEvents;
     private IConfigurationRepository? _configuration;
+    
+    // SOD/EOD repositories
+    private ISODEODOperationRepository? _sodEodOperations;
+    private IOperationStepRepository? _operationSteps;
+    private IServiceActionRepository? _serviceActions;
+    private IServiceConfigRepository? _serviceConfigs;
 
     public UnitOfWork(TemenosAlertContext context)
     {
@@ -37,6 +43,19 @@ public class UnitOfWork : IUnitOfWork
 
     public IConfigurationRepository Configuration => 
         _configuration ??= new ConfigurationRepository(_context);
+
+    // SOD/EOD repositories
+    public ISODEODOperationRepository SODEODOperations => 
+        _sodEodOperations ??= new SODEODOperationRepository(_context);
+
+    public IOperationStepRepository OperationSteps => 
+        _operationSteps ??= new OperationStepRepository(_context);
+
+    public IServiceActionRepository ServiceActions => 
+        _serviceActions ??= new ServiceActionRepository(_context);
+
+    public IServiceConfigRepository ServiceConfigs => 
+        _serviceConfigs ??= new ServiceConfigRepository(_context);
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

@@ -51,6 +51,10 @@ builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IPowerShellService, PowerShellService>();
 builder.Services.AddScoped<IMonitoringJobService, MonitoringJobService>();
 
+// SOD/EOD services
+builder.Services.AddScoped<ITemenosOperationService, TemenosOperationService>();
+builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
+
 // Register background services
 builder.Services.AddHostedService<EmailOutboxWorker>();
 builder.Services.AddHostedService<MonitoringSchedulerService>();
