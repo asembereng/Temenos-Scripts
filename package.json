@@ -1,0 +1,26 @@
+{
+  "name": "temenos-scripts",
+  "version": "1.0.0",
+  "description": "A comprehensive enterprise-grade service management and operations platform for Temenos banking environments, providing automated Start of Day (SOD) and End of Day (EOD) operations, advanced orchestration, real-time monitoring, performance optimization, and complete regulatory compliance.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "screenshots": "node scripts/screenshot-automation.js",
+    "start:web": "cd src/TemenosAlertManager.Web && npm start",
+    "install:web": "cd src/TemenosAlertManager.Web && npm install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "playwright": "^1.49.0",
+    "@playwright/test": "^1.49.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "playwright": "^1.55.0"
+  }
+}

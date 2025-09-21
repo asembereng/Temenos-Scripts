@@ -65,3 +65,11 @@ appsettings.Production.json
 appsettings.*.json
 !appsettings.json
 !appsettings.Development.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Screenshot automation logs (but keep the actual screenshots)
+/tmp/playwright-logs/
