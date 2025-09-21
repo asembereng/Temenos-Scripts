@@ -59,7 +59,7 @@ builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>(
 builder.Services.AddScoped<ISODOrchestrator, SODOrchestrator>();
 builder.Services.AddScoped<IEODOrchestrator, EODOrchestrator>();
 builder.Services.AddScoped<IDependencyManager, DependencyManager>();
-builder.Services.AddSingleton<IOperationMonitor, OperationMonitor>();
+builder.Services.AddScoped<IOperationMonitor, OperationMonitor>();
 
 // Phase 3: Advanced features services
 builder.Services.AddScoped<IOperationScheduler, OperationScheduler>();
@@ -67,33 +67,26 @@ builder.Services.AddScoped<IPerformanceOptimizer, PerformanceOptimizer>();
 builder.Services.AddScoped<IReportingService, ReportingService>();
 builder.Services.AddScoped<IDisasterRecoveryService, DisasterRecoveryService>();
 
-// Phase 4: Testing and deployment services
-builder.Services.AddScoped<ITestingService, TestingService>();
-builder.Services.AddScoped<IPerformanceTestingService, PerformanceTestingService>();
-builder.Services.AddScoped<ISecurityTestingService, SecurityTestingService>();
-builder.Services.AddScoped<IProductionDeploymentService, ProductionDeploymentService>();
-builder.Services.AddScoped<IProductionMonitoringService, ProductionMonitoringService>();
-builder.Services.AddScoped<IQualityAssuranceService, QualityAssuranceService>();
+// Phase 4: Testing and deployment services (commented out until implemented)
+// builder.Services.AddScoped<ITestingService, TestingService>();
+// builder.Services.AddScoped<IPerformanceTestingService, PerformanceTestingService>();
+// builder.Services.AddScoped<ISecurityTestingService, SecurityTestingService>();
+// builder.Services.AddScoped<IProductionDeploymentService, ProductionDeploymentService>();
+// builder.Services.AddScoped<IProductionMonitoringService, ProductionMonitoringService>();
+// builder.Services.AddScoped<IQualityAssuranceService, QualityAssuranceService>();
 
-// Register background services
-builder.Services.AddHostedService<EmailOutboxWorker>();
-builder.Services.AddHostedService<MonitoringSchedulerService>();
+// Register background services (temporarily disabled for testing)
+// builder.Services.AddHostedService<EmailOutboxWorker>();
+// builder.Services.AddHostedService<MonitoringSchedulerService>();
 
-// Configure Hangfire
-builder.Services.AddHangfire(configuration => configuration
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
-    {
-        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-        QueuePollInterval = TimeSpan.Zero,
-        UseRecommendedIsolationLevel = true,
-        DisableGlobalLocks = true
-    }));
+// Configure Hangfire (temporarily disabled for testing)
+// builder.Services.AddHangfire(configuration => configuration
+//     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+//     .UseSimpleAssemblyNameTypeSerializer()
+//     .UseRecommendedSerializerSettings()
+//     .UseInMemoryStorage());
 
-builder.Services.AddHangfireServer();
+// builder.Services.AddHangfireServer();
 
 // Configure CORS for React frontend
 builder.Services.AddCors(options =>
@@ -120,11 +113,11 @@ app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configure Hangfire dashboard
-app.UseHangfireDashboard("/hangfire", new DashboardOptions
-{
-    Authorization = new[] { new HangfireAuthorizationFilter() }
-});
+// Configure Hangfire dashboard (temporarily disabled for testing)
+// app.UseHangfireDashboard("/hangfire", new DashboardOptions
+// {
+//     Authorization = new[] { new HangfireAuthorizationFilter() }
+// });
 
 // Serve static files from wwwroot
 app.UseStaticFiles();
@@ -135,15 +128,15 @@ app.MapControllers();
 // Serve React application for all non-API routes
 app.MapFallbackToFile("index.html");
 
-// Ensure database is created and seed initial data
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<TemenosAlertContext>();
-    await context.Database.EnsureCreatedAsync();
-    
-    // Seed initial configuration if needed
-    await SeedInitialData(context);
-}
+// Ensure database is created and seed initial data (temporarily disabled for testing)
+// using (var scope = app.Services.CreateScope())
+// {
+//     var context = scope.ServiceProvider.GetRequiredService<TemenosAlertContext>();
+//     await context.Database.EnsureCreatedAsync();
+//     
+//     // Seed initial configuration if needed
+//     await SeedInitialData(context);
+// }
 
 try
 {
