@@ -6,6 +6,7 @@ import ServiceManagement from './pages/ServiceManagement';
 import SODEODOperations from './pages/SODEODOperations';
 import Monitoring from './pages/Monitoring';
 import Reports from './pages/Reports';
+import UserManagement from './pages/UserManagement';
 import './App.css';
 
 const App: React.FC = () => {
@@ -20,6 +21,7 @@ const App: React.FC = () => {
             <Route path="/operations" element={<SODEODOperations />} />
             <Route path="/monitoring" element={<Monitoring />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/user-management" element={<UserManagement />} />
           </Routes>
         </Layout>
       </div>

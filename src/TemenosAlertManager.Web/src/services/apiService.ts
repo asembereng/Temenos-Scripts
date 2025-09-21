@@ -50,6 +50,27 @@ class ApiService {
     );
   }
 
+  // Generic HTTP methods
+  async get<T = any>(url: string): Promise<T> {
+    const response = await this.api.get(url);
+    return response.data;
+  }
+
+  async post<T = any>(url: string, data?: any): Promise<T> {
+    const response = await this.api.post(url, data);
+    return response.data;
+  }
+
+  async put<T = any>(url: string, data?: any): Promise<T> {
+    const response = await this.api.put(url, data);
+    return response.data;
+  }
+
+  async delete<T = any>(url: string): Promise<T> {
+    const response = await this.api.delete(url);
+    return response.data;
+  }
+
   // Health and Monitoring
   async getHealth(): Promise<any> {
     const response = await this.api.get('/health');

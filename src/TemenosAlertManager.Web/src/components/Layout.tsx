@@ -16,6 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { path: '/operations', label: 'SOD/EOD Operations', icon: '🔄' },
     { path: '/monitoring', label: 'Monitoring', icon: '📈' },
     { path: '/reports', label: 'Reports', icon: '📋' },
+    { path: '/user-management', label: 'User Management', icon: '👥' },
   ];
 
   const isActivePath = (path: string) => {
