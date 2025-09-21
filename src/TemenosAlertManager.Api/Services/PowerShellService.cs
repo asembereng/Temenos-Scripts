@@ -38,6 +38,21 @@ public interface IPowerShellService
     /// Execute arbitrary PowerShell script on local or remote system
     /// </summary>
     Task<object?> ExecuteScriptAsync(string scriptPath, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Execute a SOD operation using PowerShell
+    /// </summary>
+    Task<object?> ExecuteSODAsync(string environment, string[] services, bool dryRun, string operationId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Execute an EOD operation using PowerShell
+    /// </summary>
+    Task<object?> ExecuteEODAsync(string environment, string[] services, bool dryRun, DateTime? cutoffTime, string operationId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Execute a service management action using PowerShell
+    /// </summary>
+    Task<object?> ExecuteServiceActionAsync(string action, string serviceName, string host, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -205,6 +220,105 @@ public class PowerShellService : IPowerShellService
         var executionTimeMs = Convert.ToDouble(properties["ExecutionTimeMs"]?.Value ?? 0);
 
         return new CheckResult(domain, target, metric, status, value, details, errorMessage, executionTimeMs);
+    }
+
+    /// <summary>
+    /// Execute a SOD operation using PowerShell
+    /// </summary>
+    public async Task<object?> ExecuteSODAsync(string environment, string[] services, bool dryRun, string operationId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Starting SOD operation for environment: {Environment}, OperationId: {OperationId}", environment, operationId);
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["Environment"] = environment,
+                ["Services"] = services,
+                ["DryRun"] = dryRun,
+                ["OperationId"] = operationId
+            };
+
+            return await ExecuteCheckAsync("TemenosChecks.SOD", "Start-TemenosSOD", parameters, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to execute SOD operation for environment: {Environment}", environment);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Execute an EOD operation using PowerShell
+    /// </summary>
+    public async Task<object?> ExecuteEODAsync(string environment, string[] services, bool dryRun, DateTime? cutoffTime, string operationId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Starting EOD operation for environment: {Environment}, OperationId: {OperationId}", environment, operationId);
+
+            var parameters = new Dictionary<string, object>
+            {
+                ["Environment"] = environment,
+                ["Services"] = services,
+                ["DryRun"] = dryRun,
+                ["OperationId"] = operationId
+            };
+
+            if (cutoffTime.HasValue)
+            {
+                parameters["CutoffTime"] = cutoffTime.Value;
+            }
+
+            return await ExecuteCheckAsync("TemenosChecks.SOD", "Start-TemenosEOD", parameters, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to execute EOD operation for environment: {Environment}", environment);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Execute a service management action using PowerShell
+    /// </summary>
+    public async Task<object?> ExecuteServiceActionAsync(string action, string serviceName, string host, Dictionary<string, object>? parameters = null, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Executing service action: {Action} on service: {ServiceName} at host: {Host}", action, serviceName, host);
+
+            var actionParameters = new Dictionary<string, object>
+            {
+                ["ServiceName"] = serviceName,
+                ["ComputerName"] = host,
+                ["Action"] = action
+            };
+
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    actionParameters[param.Key] = param.Value;
+                }
+            }
+
+            var functionName = action.ToLower() switch
+            {
+                "start" => "Start-TemenosService",
+                "stop" => "Stop-TemenosService", 
+                "restart" => "Restart-TemenosService",
+                "healthcheck" => "Test-TemenosServiceHealth",
+                _ => throw new ArgumentException($"Unsupported service action: {action}")
+            };
+
+            return await ExecuteCheckAsync("TemenosChecks.ServiceManagement", functionName, actionParameters, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to execute service action: {Action} on service: {ServiceName}", action, serviceName);
+            throw;
+        }
     }
 }
 

@@ -51,6 +51,30 @@ builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IPowerShellService, PowerShellService>();
 builder.Services.AddScoped<IMonitoringJobService, MonitoringJobService>();
 
+// SOD/EOD services
+builder.Services.AddScoped<ITemenosOperationService, TemenosOperationService>();
+builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
+
+// Phase 2: Advanced orchestration services
+builder.Services.AddScoped<ISODOrchestrator, SODOrchestrator>();
+builder.Services.AddScoped<IEODOrchestrator, EODOrchestrator>();
+builder.Services.AddScoped<IDependencyManager, DependencyManager>();
+builder.Services.AddSingleton<IOperationMonitor, OperationMonitor>();
+
+// Phase 3: Advanced features services
+builder.Services.AddScoped<IOperationScheduler, OperationScheduler>();
+builder.Services.AddScoped<IPerformanceOptimizer, PerformanceOptimizer>();
+builder.Services.AddScoped<IReportingService, ReportingService>();
+builder.Services.AddScoped<IDisasterRecoveryService, DisasterRecoveryService>();
+
+// Phase 4: Testing and deployment services
+builder.Services.AddScoped<ITestingService, TestingService>();
+builder.Services.AddScoped<IPerformanceTestingService, PerformanceTestingService>();
+builder.Services.AddScoped<ISecurityTestingService, SecurityTestingService>();
+builder.Services.AddScoped<IProductionDeploymentService, ProductionDeploymentService>();
+builder.Services.AddScoped<IProductionMonitoringService, ProductionMonitoringService>();
+builder.Services.AddScoped<IQualityAssuranceService, QualityAssuranceService>();
+
 // Register background services
 builder.Services.AddHostedService<EmailOutboxWorker>();
 builder.Services.AddHostedService<MonitoringSchedulerService>();

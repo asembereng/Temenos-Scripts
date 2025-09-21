@@ -15,6 +15,11 @@ public class TemenosAlertContext : DbContext
     public DbSet<AlertOutbox> AlertOutbox { get; set; }
     public DbSet<CheckResult> CheckResults { get; set; }
     public DbSet<AuditEvent> AuditEvents { get; set; }
+    
+    // SOD/EOD entities
+    public DbSet<SODEODOperation> SODEODOperations { get; set; }
+    public DbSet<OperationStep> OperationSteps { get; set; }
+    public DbSet<ServiceAction> ServiceActions { get; set; }
 
     // Configuration entities
     public DbSet<ServiceConfig> ServiceConfigs { get; set; }
@@ -23,6 +28,26 @@ public class TemenosAlertContext : DbContext
     public DbSet<AuthConfig> AuthConfigs { get; set; }
     public DbSet<AlertConfig> AlertConfigs { get; set; }
     public DbSet<SystemConfig> SystemConfigs { get; set; }
+
+    // Phase 3 entities
+    public DbSet<ScheduledOperation> ScheduledOperations { get; set; }
+    public DbSet<PerformanceBaseline> PerformanceBaselines { get; set; }
+    public DbSet<Core.Entities.PerformanceThreshold> PerformanceThresholds { get; set; }
+    public DbSet<GeneratedReport> GeneratedReports { get; set; }
+    public DbSet<DRCheckpoint> DRCheckpoints { get; set; }
+    public DbSet<DRTest> DRTests { get; set; }
+    public DbSet<AutomationWorkflow> AutomationWorkflows { get; set; }
+    public DbSet<WorkflowExecution> WorkflowExecutions { get; set; }
+    public DbSet<Core.Entities.OptimizationRecommendation> OptimizationRecommendations { get; set; }
+
+    // Phase 4 entities
+    public DbSet<TestExecution> TestExecutions { get; set; }
+    public DbSet<PerformanceTestResult> PerformanceTestResults { get; set; }
+    public DbSet<SecurityScanResult> SecurityScanResults { get; set; }
+    public DbSet<Deployment> Deployments { get; set; }
+    public DbSet<ProductionIncident> ProductionIncidents { get; set; }
+    public DbSet<MaintenanceWindow> MaintenanceWindows { get; set; }
+    public DbSet<QualityGate> QualityGates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,6 +100,43 @@ public class TemenosAlertContext : DbContext
             .IsUnique()
             .HasDatabaseName("UX_AuthConfigs_AdGroupName");
 
+        // Configure SOD/EOD operation relationships
+        modelBuilder.Entity<OperationStep>()
+            .HasOne(os => os.Operation)
+            .WithMany(op => op.OperationSteps)
+            .HasForeignKey(os => os.OperationId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ServiceAction>()
+            .HasOne(sa => sa.ServiceConfig)
+            .WithMany(sc => sc.ServiceActions)
+            .HasForeignKey(sa => sa.ServiceConfigId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ServiceAction>()
+            .HasOne(sa => sa.Operation)
+            .WithMany(op => op.ServiceActions)
+            .HasForeignKey(sa => sa.OperationId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Configure indexes for SOD/EOD entities
+        modelBuilder.Entity<SODEODOperation>()
+            .HasIndex(op => new { op.Status, op.StartTime })
+            .HasDatabaseName("IX_SODEODOperations_Status_StartTime");
+
+        modelBuilder.Entity<SODEODOperation>()
+            .HasIndex(op => op.OperationCode)
+            .IsUnique()
+            .HasDatabaseName("UX_SODEODOperations_OperationCode");
+
+        modelBuilder.Entity<OperationStep>()
+            .HasIndex(os => new { os.OperationId, os.StepOrder })
+            .HasDatabaseName("IX_OperationSteps_OperationId_StepOrder");
+
+        modelBuilder.Entity<ServiceAction>()
+            .HasIndex(sa => new { sa.ServiceConfigId, sa.StartTime })
+            .HasDatabaseName("IX_ServiceActions_ServiceConfigId_StartTime");
+
         // Configure soft delete global filter
         modelBuilder.Entity<Alert>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<AlertOutbox>().HasQueryFilter(e => !e.IsDeleted);
@@ -85,6 +147,9 @@ public class TemenosAlertContext : DbContext
         modelBuilder.Entity<AuthConfig>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<AlertConfig>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<SystemConfig>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<SODEODOperation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<OperationStep>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ServiceAction>().HasQueryFilter(e => !e.IsDeleted);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -24,6 +24,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
     <PackageReference Include="System.Management.Automation" Version="7.4.5" />
+    <PackageReference Include="NCrontab" Version="3.3.3" />
   </ItemGroup>
 
   <ItemGroup>
