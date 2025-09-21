@@ -1,0 +1,411 @@
+.system-configuration {
+  width: 100%;
+}
+
+.config-header {
+  margin-bottom: 30px;
+}
+
+.config-header h2 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin: 0 0 8px 0;
+}
+
+.config-header p {
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.error {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c66;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.success {
+  background: #efe;
+  border: 1px solid #cfc;
+  color: #6c6;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.config-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6c757d;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-button:hover {
+  color: #495057;
+  background-color: #f8f9fa;
+}
+
+.tab-active {
+  color: #3498db !important;
+  border-bottom-color: #3498db !important;
+  background-color: #f8f9fa;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  color: #2c3e50;
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.form-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.form-container {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-container h4 {
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  font-size: 1.25rem;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto !important;
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table th,
+.table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+}
+
+.table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.host-name strong,
+.config-key {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.host-address {
+  background: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #495057;
+}
+
+.type-badge,
+.status-badge,
+.category-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.type-t24 {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.type-tph {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.type-mq {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.type-mssql {
+  background: #e8f5e8;
+  color: #388e3c;
+}
+
+.type-host {
+  background: #fce4ec;
+  color: #c2185b;
+}
+
+.type-jvm {
+  background: #fff8e1;
+  color: #f9a825;
+}
+
+.status-enabled {
+  background: #e8f5e8;
+  color: #388e3c;
+}
+
+.status-disabled {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.category-core-banking {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.category-payment-hub {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.category-messaging {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.category-database {
+  background: #e8f5e8;
+  color: #388e3c;
+}
+
+.category-security {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.category-monitoring {
+  background: #fff8e1;
+  color: #f9a825;
+}
+
+.host-description,
+.config-description {
+  color: #6c757d;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.host-actions,
+.config-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.config-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.encrypted-badge {
+  font-size: 12px;
+}
+
+.time-ago {
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 12px;
+  }
+
+  .host-actions,
+  .config-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .config-tabs {
+    flex-wrap: wrap;
+  }
+
+  .tab-button {
+    flex: 1;
+    min-width: 120px;
+  }
+}

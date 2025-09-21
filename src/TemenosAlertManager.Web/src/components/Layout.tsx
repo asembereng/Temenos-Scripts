@@ -16,10 +16,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { path: '/operations', label: 'SOD/EOD Operations', icon: '🔄' },
     { path: '/monitoring', label: 'Monitoring', icon: '📈' },
     { path: '/reports', label: 'Reports', icon: '📋' },
-    { path: '/user-management', label: 'User Management', icon: '👥' },
+    { path: '/administration', label: 'Administration', icon: '🔐' },
   ];
 
   const isActivePath = (path: string) => {
+    if (path === '/administration') {
+      return location.pathname.startsWith('/administration');
+    }
     return location.pathname === path;
   };
 
