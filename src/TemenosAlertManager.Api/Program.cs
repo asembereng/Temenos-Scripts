@@ -126,7 +126,14 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     Authorization = new[] { new HangfireAuthorizationFilter() }
 });
 
+// Serve static files from wwwroot
+app.UseStaticFiles();
+
+// Configure API routes
 app.MapControllers();
+
+// Serve React application for all non-API routes
+app.MapFallbackToFile("index.html");
 
 // Ensure database is created and seed initial data
 using (var scope = app.Services.CreateScope())
