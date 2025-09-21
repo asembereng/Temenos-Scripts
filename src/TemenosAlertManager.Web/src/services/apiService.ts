@@ -173,6 +173,27 @@ class ApiService {
     });
     return response.data;
   }
+
+  // Enhanced Monitoring Methods
+  async getSystemMetrics(): Promise<SystemMetrics> {
+    const response = await this.api.get('/monitoring/system-metrics');
+    return response.data;
+  }
+
+  async getOperationMetrics(operationId: string): Promise<any> {
+    const response = await this.api.get(`/monitoring/operations/${operationId}/metrics`);
+    return response.data;
+  }
+
+  async getHealthSummaries(): Promise<HealthSummary[]> {
+    const response = await this.api.get('/health/summaries');
+    return response.data;
+  }
+
+  async acknowledgeAlert(alertId: number, notes?: string): Promise<any> {
+    const response = await this.api.post(`/alerts/${alertId}/acknowledge`, { notes });
+    return response.data;
+  }
 }
 
 export const apiService = new ApiService();
