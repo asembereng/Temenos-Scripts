@@ -45,7 +45,7 @@ public class UserManagementController : ControllerBase
                 Role = ac.Role,
                 IsEnabled = ac.IsEnabled,
                 Description = ac.Description,
-                CreatedAt = authConfig.CreatedAt,
+                CreatedAt = ac.CreatedAt,
                 UpdatedAt = ac.UpdatedAt ?? DateTime.UtcNow
             });
 
@@ -119,7 +119,7 @@ public class UserManagementController : ControllerBase
                 IsEnabled = authConfig.IsEnabled,
                 Description = authConfig.Description,
                 CreatedAt = authConfig.CreatedAt,
-                UpdatedAt = authConfig.UpdatedAt
+                UpdatedAt = authConfig.UpdatedAt ?? DateTime.UtcNow
             };
 
             return Ok(result);
@@ -161,7 +161,7 @@ public class UserManagementController : ControllerBase
                 IsEnabled = authConfig.IsEnabled,
                 Description = authConfig.Description,
                 CreatedAt = authConfig.CreatedAt,
-                UpdatedAt = authConfig.UpdatedAt
+                UpdatedAt = authConfig.UpdatedAt ?? DateTime.UtcNow
             };
 
             return Ok(result);
