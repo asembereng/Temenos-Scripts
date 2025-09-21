@@ -1,0 +1,57 @@
+{
+  "name": "Temenos Service Management Platform",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
+  "features": {
+    "ghcr.io/devcontainers/features/powershell:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/azure-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-vscode.powershell",
+        "ms-mssql.mssql",
+        "humao.rest-client",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "dotnet.defaultSolution": "TemenosAlertManager.sln",
+        "powershell.powerShellDefaultVersion": "PowerShell (x64)",
+        "files.exclude": {
+          "**/bin": true,
+          "**/obj": true,
+          "**/.vs": true
+        }
+      }
+    }
+  },
+  "postCreateCommand": "dotnet restore TemenosAlertManager.sln && dotnet build TemenosAlertManager.sln",
+  "forwardPorts": [5000, 5001, 1433, 8080],
+  "portsAttributes": {
+    "5001": {
+      "label": "HTTPS API",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "HTTP API", 
+      "onAutoForward": "ignore"
+    },
+    "8080": {
+      "label": "Mock Temenos Services",
+      "onAutoForward": "notify"
+    }
+  }
+}
