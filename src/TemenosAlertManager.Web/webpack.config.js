@@ -14,20 +14,22 @@ module.exports = {
   devServer: {
     port: 3000,
     hot: true,
-    open: true,
+    open: false,
     historyApiFallback: true,
-    proxy: {
-      '/api': {
+    proxy: [
+      {
+        context: ['/api'],
         target: 'https://localhost:5001',
         secure: false,
         changeOrigin: true,
       },
-      '/hangfire': {
+      {
+        context: ['/hangfire'],
         target: 'https://localhost:5001',
         secure: false,
         changeOrigin: true,
       }
-    }
+    ]
   },
   module: {
     rules: [
