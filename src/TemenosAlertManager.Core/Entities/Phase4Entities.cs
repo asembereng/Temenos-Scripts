@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using TemenosAlertManager.Core.Enums;
 
 namespace TemenosAlertManager.Core.Entities;
 
 /// <summary>
 /// Entity for tracking test executions
 /// </summary>
-public class TestExecution
+public class TestExecution : BaseEntity
 {
-    public int Id { get; set; }
     public string ExecutionId { get; set; } = string.Empty;
     public string TestSuiteName { get; set; } = string.Empty;
     public string Environment { get; set; } = string.Empty;
@@ -21,15 +21,13 @@ public class TestExecution
     public int SkippedTests { get; set; }
     public string? ErrorMessage { get; set; }
     public string? TestResults { get; set; } // JSON
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
 /// <summary>
 /// Entity for performance test results
 /// </summary>
-public class PerformanceTestResult
+public class PerformanceTestResult : BaseEntity
 {
-    public int Id { get; set; }
     public string TestId { get; set; } = string.Empty;
     public string TestName { get; set; } = string.Empty;
     public string Environment { get; set; } = string.Empty;
@@ -44,15 +42,13 @@ public class PerformanceTestResult
     public string? Metrics { get; set; } // JSON
     public bool PassedThresholds { get; set; }
     public string ExecutedBy { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
 /// <summary>
 /// Entity for security scan results
 /// </summary>
-public class SecurityScanResult
+public class SecurityScanResult : BaseEntity
 {
-    public int Id { get; set; }
     public string ScanId { get; set; } = string.Empty;
     public string ScanName { get; set; } = string.Empty;
     public SecurityScanType ScanType { get; set; }
@@ -66,15 +62,13 @@ public class SecurityScanResult
     public string? Issues { get; set; } // JSON
     public string? Recommendations { get; set; } // JSON
     public string ExecutedBy { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
 /// <summary>
 /// Entity for deployment tracking
 /// </summary>
-public class Deployment
+public class Deployment : BaseEntity
 {
-    public int Id { get; set; }
     public string DeploymentId { get; set; } = string.Empty;
     public string Version { get; set; } = string.Empty;
     public string Environment { get; set; } = string.Empty;
@@ -88,15 +82,13 @@ public class Deployment
     public string? RollbackPlan { get; set; } // JSON
     public bool IsRollback { get; set; }
     public string? ParentDeploymentId { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
 /// <summary>
 /// Entity for production incidents
 /// </summary>
-public class ProductionIncident
+public class ProductionIncident : BaseEntity
 {
-    public int Id { get; set; }
     public string IncidentId { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -111,16 +103,13 @@ public class ProductionIncident
     public string? AssignedTo { get; set; }
     public string? ResolutionNotes { get; set; }
     public string? ActionsTaken { get; set; } // JSON
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
 
 /// <summary>
 /// Entity for maintenance windows
 /// </summary>
-public class MaintenanceWindow
+public class MaintenanceWindow : BaseEntity
 {
-    public int Id { get; set; }
     public string WindowId { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -132,16 +121,13 @@ public class MaintenanceWindow
     public string AffectedServices { get; set; } = string.Empty; // JSON array
     public string ScheduledBy { get; set; } = string.Empty;
     public string? NotificationRecipients { get; set; } // JSON array
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
 
 /// <summary>
 /// Entity for quality gates
 /// </summary>
-public class QualityGate
+public class QualityGate : BaseEntity
 {
-    public int Id { get; set; }
     public string GateId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Environment { get; set; } = string.Empty;
@@ -152,105 +138,4 @@ public class QualityGate
     public string? Results { get; set; } // JSON
     public string? FailureReasons { get; set; } // JSON
     public string ExecutedBy { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-}
-
-// Enums for Phase 4 entities
-public enum TestExecutionStatus
-{
-    Queued,
-    Running,
-    Completed,
-    Failed,
-    Cancelled
-}
-
-public enum PerformanceTestType
-{
-    Load,
-    Stress,
-    Volume,
-    Endurance,
-    Spike
-}
-
-public enum SecurityScanType
-{
-    Vulnerability,
-    Penetration,
-    Compliance,
-    CodeSecurity,
-    Infrastructure
-}
-
-public enum SecurityScanStatus
-{
-    Scheduled,
-    Running,
-    Completed,
-    Failed,
-    Cancelled
-}
-
-public enum DeploymentType
-{
-    Feature,
-    Hotfix,
-    Rollback,
-    Emergency,
-    Scheduled
-}
-
-public enum DeploymentStatus
-{
-    Planned,
-    InProgress,
-    Completed,
-    Failed,
-    RolledBack,
-    Cancelled
-}
-
-public enum IncidentSeverity
-{
-    Low,
-    Medium,
-    High,
-    Critical,
-    Emergency
-}
-
-public enum IncidentStatus
-{
-    Open,
-    Acknowledged,
-    InProgress,
-    Resolved,
-    Closed
-}
-
-public enum MaintenanceType
-{
-    Planned,
-    Emergency,
-    Preventive,
-    Corrective
-}
-
-public enum MaintenanceStatus
-{
-    Scheduled,
-    InProgress,
-    Completed,
-    Cancelled,
-    Extended
-}
-
-public enum QualityGateType
-{
-    CodeQuality,
-    TestCoverage,
-    Security,
-    Performance,
-    Compliance
 }
