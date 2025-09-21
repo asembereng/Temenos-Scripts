@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using TemenosAlertManager.Core.Enums;
 
 namespace TemenosAlertManager.Core.Models;
 
@@ -690,17 +691,7 @@ public class AlertSummaryDto
     public DateTime LastUpdated { get; set; }
 }
 
-public class AlertDto
-{
-    public string AlertId { get; set; } = string.Empty;
-    public string Title { get; set; } = string.Empty;
-    public AlertSeverity Severity { get; set; }
-    public string Source { get; set; } = string.Empty;
-    public DateTime TriggeredTime { get; set; }
-    public string? AcknowledgedBy { get; set; }
-    public DateTime? AcknowledgedTime { get; set; }
-    public AlertStatus Status { get; set; }
-}
+// AlertDto moved to Dtos.cs to avoid duplication
 
 public class SystemMetricsDto
 {
@@ -988,47 +979,4 @@ public class UserAcceptanceTestResult
     public string TestedBy { get; set; } = string.Empty;
     public DateTime TestDate { get; set; }
     public string? Comments { get; set; }
-}
-
-// Additional Enums
-public enum AlertSeverity
-{
-    Informational,
-    Low,
-    Medium,
-    High,
-    Critical
-}
-
-public enum AlertStatus
-{
-    Active,
-    Acknowledged,
-    Resolved,
-    Suppressed
-}
-
-public enum CodeIssueSeverity
-{
-    Info,
-    Minor,
-    Major,
-    Critical,
-    Blocker
-}
-
-public enum RegressionTestStatus
-{
-    Passed,
-    Failed,
-    PassedWithWarnings,
-    Error
-}
-
-public enum AcceptanceTestStatus
-{
-    Accepted,
-    Rejected,
-    ConditionallyAccepted,
-    PendingReview
 }

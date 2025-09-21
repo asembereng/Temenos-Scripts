@@ -41,6 +41,17 @@ public interface IConfigurationRepository
     Task<IEnumerable<SqlTargetConfig>> GetSqlTargetConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
     Task<IEnumerable<AuthConfig>> GetAuthConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
     Task<IEnumerable<AlertConfig>> GetAlertConfigsAsync(bool enabledOnly = true, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SystemConfig>> GetSystemConfigsAsync(CancellationToken cancellationToken = default);
+    
+    // AuthConfig management
+    Task<AuthConfig?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<AuthConfig> AddAsync(AuthConfig entity, CancellationToken cancellationToken = default);
+    Task UpdateAsync(AuthConfig entity, CancellationToken cancellationToken = default);
+    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+    
+    // SystemConfig management  
+    Task<SystemConfig> AddAsync(SystemConfig entity, CancellationToken cancellationToken = default);
+    Task UpdateAsync(SystemConfig entity, CancellationToken cancellationToken = default);
 }
 
 public interface ISODEODOperationRepository : IRepository<SODEODOperation>

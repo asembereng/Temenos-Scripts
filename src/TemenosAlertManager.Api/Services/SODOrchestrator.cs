@@ -3,6 +3,7 @@ using TemenosAlertManager.Core.Entities;
 using TemenosAlertManager.Core.Entities.Configuration;
 using TemenosAlertManager.Core.Interfaces;
 using TemenosAlertManager.Core.Models;
+using ValidationResult = TemenosAlertManager.Core.Interfaces.ValidationResult;
 
 namespace TemenosAlertManager.Api.Services;
 

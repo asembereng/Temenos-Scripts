@@ -3,6 +3,8 @@ using System.Diagnostics;
 using TemenosAlertManager.Core.Entities;
 using TemenosAlertManager.Core.Interfaces;
 using TemenosAlertManager.Core.Models;
+using PerformanceMetrics = TemenosAlertManager.Core.Interfaces.PerformanceMetrics;
+using AlertSummaryDto = TemenosAlertManager.Core.Interfaces.AlertSummaryDto;
 
 namespace TemenosAlertManager.Api.Services;
 

@@ -87,4 +87,53 @@ public class ConfigurationRepository : IConfigurationRepository
             .ThenBy(ac => ac.Name)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<SystemConfig>> GetSystemConfigsAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.SystemConfigs
+            .OrderBy(sc => sc.Category)
+            .ThenBy(sc => sc.Key)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<SystemConfig> AddAsync(SystemConfig entity, CancellationToken cancellationToken = default)
+    {
+        _context.SystemConfigs.Add(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+        return entity;
+    }
+
+    public async Task UpdateAsync(SystemConfig entity, CancellationToken cancellationToken = default)
+    {
+        _context.SystemConfigs.Update(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<AuthConfig?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _context.AuthConfigs.FindAsync(new object[] { id }, cancellationToken);
+    }
+
+    public async Task<AuthConfig> AddAsync(AuthConfig entity, CancellationToken cancellationToken = default)
+    {
+        _context.AuthConfigs.Add(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+        return entity;
+    }
+
+    public async Task UpdateAsync(AuthConfig entity, CancellationToken cancellationToken = default)
+    {
+        _context.AuthConfigs.Update(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var authConfig = await _context.AuthConfigs.FindAsync(new object[] { id }, cancellationToken);
+        if (authConfig != null)
+        {
+            _context.AuthConfigs.Remove(authConfig);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

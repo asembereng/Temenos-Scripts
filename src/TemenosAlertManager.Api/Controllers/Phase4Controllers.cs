@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TemenosAlertManager.Core.Interfaces;
 using TemenosAlertManager.Core.Models;
+using TemenosAlertManager.Core.Enums;
+using AlertSummaryDto = TemenosAlertManager.Core.Interfaces.AlertSummaryDto;
 
 namespace TemenosAlertManager.Api.Controllers;
 

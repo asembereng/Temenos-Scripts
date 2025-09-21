@@ -55,3 +55,158 @@ public enum AlertDeliveryStatus
     Failed = 2,
     Retrying = 3
 }
+
+// Phase 4 enums for testing and deployment
+public enum TestExecutionStatus
+{
+    Pending = 0,
+    Running = 1,
+    Completed = 2,
+    Failed = 3,
+    Cancelled = 4
+}
+
+public enum PerformanceTestType
+{
+    Load = 0,
+    Stress = 1,
+    Volume = 2,
+    Spike = 3,
+    Endurance = 4
+}
+
+public enum SecurityScanType
+{
+    StaticAnalysis = 0,
+    DynamicAnalysis = 1,
+    DependencyCheck = 2,
+    ContainerScan = 3,
+    PenetrationTest = 4
+}
+
+public enum SecurityScanStatus
+{
+    Pending = 0,
+    Running = 1,
+    Completed = 2,
+    Failed = 3
+}
+
+public enum DeploymentType
+{
+    BlueGreen = 0,
+    Canary = 1,
+    RollingUpdate = 2,
+    Recreate = 3
+}
+
+public enum DeploymentStatus
+{
+    Pending = 0,
+    InProgress = 1,
+    Completed = 2,
+    Failed = 3,
+    RolledBack = 4
+}
+
+public enum MaintenanceType
+{
+    Planned = 0,
+    Emergency = 1,
+    Preventive = 2
+}
+
+public enum MaintenanceStatus
+{
+    Scheduled = 0,
+    InProgress = 1,
+    Completed = 2,
+    Cancelled = 3
+}
+
+public enum QualityGateType
+{
+    CodeCoverage = 0,
+    SecurityScan = 1,
+    PerformanceTest = 2,
+    UnitTests = 3,
+    IntegrationTests = 4
+}
+
+public enum QualityGateStatus
+{
+    Pending = 0,
+    Passed = 1,
+    Failed = 2,
+    Skipped = 3
+}
+
+public enum ReportFormat
+{
+    PDF = 0,
+    Excel = 1,
+    CSV = 2,
+    JSON = 3,
+    XML = 4
+}
+
+public enum AlertStatus
+{
+    New = 0,
+    Active = 1,
+    Acknowledged = 2,
+    Resolved = 3,
+    Closed = 4
+}
+
+public enum IncidentSeverity
+{
+    Low = 0,
+    Medium = 1,
+    High = 2,
+    Critical = 3
+}
+
+public enum IncidentStatus
+{
+    Open = 0,
+    InProgress = 1,
+    Resolved = 2,
+    Closed = 3
+}
+
+public enum DateRange
+{
+    Today = 0,
+    Yesterday = 1,
+    LastWeek = 2,
+    LastMonth = 3,
+    LastQuarter = 4,
+    LastYear = 5,
+    Custom = 6
+}
+
+public enum CodeIssueSeverity
+{
+    Info = 0,
+    Minor = 1,
+    Major = 2,
+    Critical = 3,
+    Blocker = 4
+}
+
+public enum RegressionTestStatus
+{
+    Passed = 0,
+    Failed = 1,
+    PassedWithWarnings = 2,
+    Error = 3
+}
+
+public enum AcceptanceTestStatus
+{
+    Accepted = 0,
+    Rejected = 1,
+    ConditionallyAccepted = 2,
+    PendingReview = 3
+}
