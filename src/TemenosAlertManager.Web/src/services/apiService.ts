@@ -8,7 +8,8 @@ import {
   OperationResult,
   DashboardData,
   Alert,
-  SystemMetrics
+  SystemMetrics,
+  HealthSummary
 } from '../types';
 
 class ApiService {
@@ -187,11 +188,6 @@ class ApiService {
 
   async getHealthSummaries(): Promise<HealthSummary[]> {
     const response = await this.api.get('/health/summaries');
-    return response.data;
-  }
-
-  async acknowledgeAlert(alertId: number, notes?: string): Promise<any> {
-    const response = await this.api.post(`/alerts/${alertId}/acknowledge`, { notes });
     return response.data;
   }
 }
