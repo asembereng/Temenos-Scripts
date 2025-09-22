@@ -81,21 +81,31 @@ public class ReportsController : ControllerBase
     /// </summary>
     [HttpPost("generate")]
     [Authorize(Policy = "OperatorOrAdmin")]
-    public async Task<ActionResult<object>> GenerateReport([FromBody] object reportConfig, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<object>> GenerateReport([FromBody] ReportGenerationRequest reportConfig, CancellationToken cancellationToken = default)
     {
         try
         {
             var userId = User.Identity?.Name ?? "Unknown";
-            _logger.LogInformation("Generating report requested by {UserId}", userId);
+            _logger.LogInformation("Generating {ReportType} report requested by {UserId}", reportConfig.ReportType, userId);
 
-            // In a real implementation, this would process the reportConfig and generate the actual report
-            // For now, return a success response
+            // Process the report configuration and generate the actual report
+            var reportResult = reportConfig.ReportType.ToLower() switch
+            {
+                "operations" => await GenerateOperationsReportAsync(reportConfig, cancellationToken),
+                "performance" => await GeneratePerformanceReportAsync(reportConfig, cancellationToken),
+                "compliance" => await GenerateComplianceReportAsync(reportConfig, cancellationToken),
+                "custom" => await GenerateCustomReportAsync(reportConfig, cancellationToken),
+                _ => throw new ArgumentException($"Unknown report type: {reportConfig.ReportType}")
+            };
+
             var result = new
             {
-                reportId = Guid.NewGuid().ToString(),
-                status = "queued",
-                message = "Report generation started successfully",
-                estimatedCompletion = DateTime.UtcNow.AddMinutes(5)
+                reportId = reportResult.ReportId,
+                status = "completed",
+                message = "Report generated successfully",
+                downloadUrl = $"/api/reports/{reportResult.ReportId}/download",
+                format = reportConfig.Format,
+                generatedAt = DateTime.UtcNow
             };
 
             return Ok(result);
@@ -105,6 +115,96 @@ public class ReportsController : ControllerBase
             _logger.LogError(ex, "Failed to generate report");
             return StatusCode(500, new { message = "Failed to generate report", error = ex.Message });
         }
+    }
+
+    private async Task<ReportGenerationResult> GenerateOperationsReportAsync(ReportGenerationRequest request, CancellationToken cancellationToken)
+    {
+        // Mock implementation - in real scenario, this would process actual data
+        await Task.Delay(1000, cancellationToken); // Simulate processing time
+        
+        var reportId = Guid.NewGuid().ToString();
+        var reportContent = GenerateMockReportContent("Operations Summary", request);
+        
+        return new ReportGenerationResult 
+        { 
+            ReportId = reportId, 
+            Content = reportContent,
+            Title = request.Title ?? "Operations Summary Report"
+        };
+    }
+
+    private async Task<ReportGenerationResult> GeneratePerformanceReportAsync(ReportGenerationRequest request, CancellationToken cancellationToken)
+    {
+        await Task.Delay(1500, cancellationToken); // Simulate processing time
+        
+        var reportId = Guid.NewGuid().ToString();
+        var reportContent = GenerateMockReportContent("Performance Analytics", request);
+        
+        return new ReportGenerationResult 
+        { 
+            ReportId = reportId, 
+            Content = reportContent,
+            Title = request.Title ?? "Performance Analytics Report"
+        };
+    }
+
+    private async Task<ReportGenerationResult> GenerateComplianceReportAsync(ReportGenerationRequest request, CancellationToken cancellationToken)
+    {
+        await Task.Delay(2000, cancellationToken); // Simulate processing time
+        
+        var reportId = Guid.NewGuid().ToString();
+        var reportContent = GenerateMockReportContent("Compliance Report", request);
+        
+        return new ReportGenerationResult 
+        { 
+            ReportId = reportId, 
+            Content = reportContent,
+            Title = request.Title ?? "Compliance Report"
+        };
+    }
+
+    private async Task<ReportGenerationResult> GenerateCustomReportAsync(ReportGenerationRequest request, CancellationToken cancellationToken)
+    {
+        await Task.Delay(1200, cancellationToken); // Simulate processing time
+        
+        var reportId = Guid.NewGuid().ToString();
+        var reportContent = GenerateMockReportContent("Custom Report", request);
+        
+        return new ReportGenerationResult 
+        { 
+            ReportId = reportId, 
+            Content = reportContent,
+            Title = request.Title ?? "Custom Report"
+        };
+    }
+
+    private string GenerateMockReportContent(string reportType, ReportGenerationRequest request)
+    {
+        var content = $@"
+{reportType}
+Generated on: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
+Period: {request.DateRange?.StartDate} to {request.DateRange?.EndDate}
+Environment: {request.Environment ?? "All Environments"}
+Format: {request.Format}
+
+Title: {request.Title}
+Description: {request.Description}
+
+=== REPORT CONTENT ===
+
+This is a mock {reportType.ToLower()} report generated for demonstration purposes.
+The actual implementation would include real data processing and formatting.
+
+Key Metrics:
+- Total Operations: {new Random().Next(100, 1000)}
+- Success Rate: {new Random().Next(85, 99)}%
+- Average Response Time: {new Random().Next(100, 500)}ms
+- Error Count: {new Random().Next(0, 50)}
+
+=== END OF REPORT ===
+        ";
+
+        return content.Trim();
     }
 
     /// <summary>
@@ -256,4 +356,37 @@ public class ReportsController : ControllerBase
 public class ExportRequest
 {
     public string Format { get; set; } = "PDF";
+}
+
+/// <summary>
+/// Request model for report generation
+/// </summary>
+public class ReportGenerationRequest
+{
+    public string ReportType { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Format { get; set; } = "pdf";
+    public string? Environment { get; set; }
+    public DateRangeRequest? DateRange { get; set; }
+    public Dictionary<string, object>? Parameters { get; set; }
+}
+
+/// <summary>
+/// Date range for reports
+/// </summary>
+public class DateRangeRequest
+{
+    public string StartDate { get; set; } = string.Empty;
+    public string EndDate { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Result of report generation
+/// </summary>
+public class ReportGenerationResult
+{
+    public string ReportId { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
 }

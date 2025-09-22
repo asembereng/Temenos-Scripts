@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/apiService';
 import { Alert, SystemMetrics, HealthSummary } from '../types';
+import TrendCharts from '../components/TrendCharts';
 import './Dashboard.css';
 
 interface MonitoringData {
@@ -15,7 +16,7 @@ const Monitoring: React.FC = () => {
   const [monitoringData, setMonitoringData] = useState<MonitoringData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'metrics' | 'alerts' | 'health' | 'trends'>('metrics');
+  const [activeTab, setActiveTab] = useState<'metrics' | 'alerts' | 'health' | 'trends' | 'custom'>('metrics');
   const [alertFilter, setAlertFilter] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
 
   useEffect(() => {
@@ -153,6 +154,12 @@ const Monitoring: React.FC = () => {
           onClick={() => setActiveTab('trends')}
         >
           Trend Analysis
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'custom' ? 'active' : ''}`}
+          onClick={() => setActiveTab('custom')}
+        >
+          Custom Views
         </button>
       </div>
 
@@ -329,16 +336,105 @@ const Monitoring: React.FC = () => {
                 <h3>Performance Trends</h3>
               </div>
               <div className="card-body">
-                <p>Historical performance data and trend analysis will be displayed here.</p>
-                <div className="trend-placeholder">
-                  <div className="trend-chart">
-                    📈 Response Time Trends
+                <p>Historical performance data and trend analysis over the last 7 days.</p>
+                <TrendCharts 
+                  performanceTrends={monitoringData.performanceTrends}
+                  performanceBaselines={monitoringData.performanceBaselines}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Monitoring Views */}
+      {activeTab === 'custom' && (
+        <div className="monitoring-section">
+          <h2>Custom Monitoring Views</h2>
+          <div className="custom-views-content">
+            <div className="custom-views-grid">
+              <div className="custom-view-card">
+                <div className="custom-view-header">
+                  <h3>Critical Systems Monitor</h3>
+                  <button className="btn btn-sm btn-primary">Configure</button>
+                </div>
+                <div className="custom-view-body">
+                  <p>Monitor only critical systems and high-priority alerts</p>
+                  <div className="custom-view-metrics">
+                    <div className="metric-item">
+                      <span className="metric-label">Critical Alerts:</span>
+                      <span className="metric-value critical">
+                        {monitoringData.alerts.filter(a => a.severity.toLowerCase() === 'critical').length}
+                      </span>
+                    </div>
+                    <div className="metric-item">
+                      <span className="metric-label">System Status:</span>
+                      <span className="metric-value">
+                        {monitoringData.healthSummaries.filter(h => h.overallStatus.toLowerCase() === 'critical').length > 0 ? '🔴 Critical' : '🟢 Healthy'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="trend-chart">
-                    📊 Throughput Analysis
+                </div>
+              </div>
+
+              <div className="custom-view-card">
+                <div className="custom-view-header">
+                  <h3>Performance Dashboard</h3>
+                  <button className="btn btn-sm btn-primary">Configure</button>
+                </div>
+                <div className="custom-view-body">
+                  <p>Focus on performance metrics and bottlenecks</p>
+                  <div className="custom-view-metrics">
+                    <div className="metric-item">
+                      <span className="metric-label">Avg Response Time:</span>
+                      <span className="metric-value">
+                        {formatMetricValue(monitoringData.systemMetrics.responseTime)}ms
+                      </span>
+                    </div>
+                    <div className="metric-item">
+                      <span className="metric-label">Throughput:</span>
+                      <span className="metric-value">
+                        {formatMetricValue(monitoringData.systemMetrics.throughput)} req/s
+                      </span>
+                    </div>
                   </div>
-                  <div className="trend-chart">
-                    ⚠️ Error Rate Trends
+                </div>
+              </div>
+
+              <div className="custom-view-card">
+                <div className="custom-view-header">
+                  <h3>Resource Utilization</h3>
+                  <button className="btn btn-sm btn-primary">Configure</button>
+                </div>
+                <div className="custom-view-body">
+                  <p>Monitor system resource usage and capacity</p>
+                  <div className="custom-view-metrics">
+                    <div className="metric-item">
+                      <span className="metric-label">CPU Usage:</span>
+                      <span className="metric-value">
+                        {formatMetricValue(monitoringData.systemMetrics.cpuUtilization, '%')}
+                      </span>
+                    </div>
+                    <div className="metric-item">
+                      <span className="metric-label">Memory Usage:</span>
+                      <span className="metric-value">
+                        {formatMetricValue(monitoringData.systemMetrics.memoryUtilization, '%')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="custom-view-card">
+                <div className="custom-view-header">
+                  <h3>Create Custom View</h3>
+                  <button className="btn btn-sm btn-success">+ New View</button>
+                </div>
+                <div className="custom-view-body">
+                  <p>Build your own monitoring dashboard with specific metrics and filters</p>
+                  <div className="custom-view-actions">
+                    <button className="btn btn-outline">Import Template</button>
+                    <button className="btn btn-outline">View Gallery</button>
                   </div>
                 </div>
               </div>

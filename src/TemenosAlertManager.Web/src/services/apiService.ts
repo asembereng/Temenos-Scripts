@@ -148,12 +148,12 @@ class ApiService {
 
   // Performance and Metrics
   async getPerformanceBaselines(): Promise<any> {
-    const response = await this.api.get('/performance/baselines');
+    const response = await this.api.get('/monitoring/baselines');
     return response.data;
   }
 
   async getPerformanceTrends(): Promise<any> {
-    const response = await this.api.get('/performance/trends');
+    const response = await this.api.get('/monitoring/chart-trends');
     return response.data;
   }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import apiService from '../services/apiService';
+import ScheduledReports from '../components/ScheduledReports';
 import './Dashboard.css';
 
 interface ReportConfig {
@@ -317,27 +318,7 @@ const Reports: React.FC = () => {
       {/* Scheduled Reports Tab */}
       {activeTab === 'scheduled' && (
         <div className="reports-section">
-          <h2>Scheduled Reports</h2>
-          <div className="scheduled-reports">
-            <div className="placeholder-content">
-              <h3>📅 Automated Report Scheduling</h3>
-              <p>Set up automated report generation with customizable schedules.</p>
-              <div className="feature-list">
-                <div className="feature-item">
-                  <strong>Daily/Weekly/Monthly Reports:</strong> Configure regular report generation
-                </div>
-                <div className="feature-item">
-                  <strong>Email Distribution:</strong> Automatically send reports to stakeholders
-                </div>
-                <div className="feature-item">
-                  <strong>Custom Templates:</strong> Create reusable report templates
-                </div>
-                <div className="feature-item">
-                  <strong>Conditional Triggers:</strong> Generate reports based on system events
-                </div>
-              </div>
-            </div>
-          </div>
+          <ScheduledReports onScheduleReport={loadAvailableReports} />
         </div>
       )}
 

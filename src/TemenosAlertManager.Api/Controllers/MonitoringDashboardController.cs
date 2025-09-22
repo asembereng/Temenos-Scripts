@@ -328,6 +328,117 @@ public class MonitoringDashboardController : ControllerBase
             return StatusCode(500, new { Message = "Failed to get alert summary", Error = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Get performance trend data for charts
+    /// </summary>
+    /// <param name="days">Number of days to look back (default: 7)</param>
+    /// <returns>Performance trend data</returns>
+    [HttpGet("chart-trends")]
+    public async Task<ActionResult<PerformanceTrendData>> GetChartTrends([FromQuery] int days = 7, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Generate mock trend data for demonstration
+            var trendData = GenerateMockTrendData(days);
+            return Ok(trendData);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get chart trends");
+            return StatusCode(500, new { Message = "Failed to get chart trends", Error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Get performance baselines for comparison
+    /// </summary>
+    /// <returns>Performance baseline data</returns>
+    [HttpGet("baselines")]
+    public async Task<ActionResult<PerformanceBaselines>> GetPerformanceBaselines(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Generate mock baseline data for demonstration
+            var baselines = new PerformanceBaselines
+            {
+                ResponseTimeBaseline = 300, // ms
+                ThroughputBaseline = 150,   // req/sec
+                ErrorRateBaseline = 1.0,    // %
+                CpuUtilizationBaseline = 60, // %
+                MemoryUtilizationBaseline = 70, // %
+                LastUpdated = DateTime.UtcNow.AddDays(-1)
+            };
+
+            return Ok(baselines);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get performance baselines");
+            return StatusCode(500, new { Message = "Failed to get performance baselines", Error = ex.Message });
+        }
+    }
+
+    private PerformanceTrendData GenerateMockTrendData(int days)
+    {
+        var random = new Random();
+        var trendData = new PerformanceTrendData
+        {
+            Labels = new List<string>(),
+            ResponseTimeData = new List<double>(),
+            ThroughputData = new List<double>(),
+            ErrorRateData = new List<double>(),
+            CpuUtilizationData = new List<double>(),
+            MemoryUtilizationData = new List<double>()
+        };
+
+        for (int i = days - 1; i >= 0; i--)
+        {
+            var date = DateTime.UtcNow.AddDays(-i);
+            trendData.Labels.Add(date.ToString("MMM dd"));
+            
+            // Generate realistic trending data
+            var baseResponseTime = 300 + (random.NextDouble() - 0.5) * 100;
+            var baseThroughput = 150 + (random.NextDouble() - 0.5) * 50;
+            var baseErrorRate = 1.0 + (random.NextDouble() - 0.5) * 2;
+            var baseCpu = 60 + (random.NextDouble() - 0.5) * 20;
+            var baseMemory = 70 + (random.NextDouble() - 0.5) * 15;
+
+            trendData.ResponseTimeData.Add(Math.Max(100, baseResponseTime));
+            trendData.ThroughputData.Add(Math.Max(50, baseThroughput));
+            trendData.ErrorRateData.Add(Math.Max(0, baseErrorRate));
+            trendData.CpuUtilizationData.Add(Math.Max(10, Math.Min(100, baseCpu)));
+            trendData.MemoryUtilizationData.Add(Math.Max(20, Math.Min(100, baseMemory)));
+        }
+
+        return trendData;
+    }
+}
+
+/// <summary>
+/// Performance trend data for charts
+/// </summary>
+public class PerformanceTrendData
+{
+    public List<string> Labels { get; set; } = new();
+    public List<double> ResponseTimeData { get; set; } = new();
+    public List<double> ThroughputData { get; set; } = new();
+    public List<double> ErrorRateData { get; set; } = new();
+    public List<double> CpuUtilizationData { get; set; } = new();
+    public List<double> MemoryUtilizationData { get; set; } = new();
+}
+
+/// <summary>
+/// Performance baselines for comparison
+/// </summary>
+public class PerformanceBaselines
+{
+    public double ResponseTimeBaseline { get; set; }
+    public double ThroughputBaseline { get; set; }
+    public double ErrorRateBaseline { get; set; }
+    public double CpuUtilizationBaseline { get; set; }
+    public double MemoryUtilizationBaseline { get; set; }
+    public DateTime LastUpdated { get; set; }
 }
 
 /// <summary>
