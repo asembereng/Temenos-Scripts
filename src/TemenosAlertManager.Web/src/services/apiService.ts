@@ -8,7 +8,8 @@ import {
   OperationResult,
   DashboardData,
   Alert,
-  SystemMetrics
+  SystemMetrics,
+  HealthSummary
 } from '../types';
 
 class ApiService {
@@ -147,12 +148,12 @@ class ApiService {
 
   // Performance and Metrics
   async getPerformanceBaselines(): Promise<any> {
-    const response = await this.api.get('/performance/baselines');
+    const response = await this.api.get('/monitoring/baselines');
     return response.data;
   }
 
   async getPerformanceTrends(): Promise<any> {
-    const response = await this.api.get('/performance/trends');
+    const response = await this.api.get('/monitoring/chart-trends');
     return response.data;
   }
 
@@ -171,6 +172,22 @@ class ApiService {
     const response = await this.api.get(`/reports/${reportId}/download`, {
       responseType: 'blob'
     });
+    return response.data;
+  }
+
+  // Enhanced Monitoring Methods
+  async getSystemMetrics(): Promise<SystemMetrics> {
+    const response = await this.api.get('/monitoring/system-metrics');
+    return response.data;
+  }
+
+  async getOperationMetrics(operationId: string): Promise<any> {
+    const response = await this.api.get(`/monitoring/operations/${operationId}/metrics`);
+    return response.data;
+  }
+
+  async getHealthSummaries(): Promise<HealthSummary[]> {
+    const response = await this.api.get('/health/summaries');
     return response.data;
   }
 }
