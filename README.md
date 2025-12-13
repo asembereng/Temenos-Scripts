@@ -38,11 +38,15 @@ The Temenos Service Management Platform delivers a complete banking operations s
 - **Backend**: ASP.NET Core 8 with comprehensive service management APIs
 - **Database**: SQL Server with Entity Framework Core and advanced schema
 - **Background Processing**: Hangfire for orchestration and scheduled operations
-- **Frontend**: React + TypeScript with real-time monitoring dashboards
+- **Frontend**: React 19 + TypeScript with real-time monitoring dashboards
+- **Build Tools**: Webpack 5 for frontend bundling and optimization
+- **Real-time Communication**: SignalR for live updates and notifications
 - **Automation**: PowerShell 7 modules with remote execution and orchestration
 - **Scheduling**: NCrontab for advanced cron-based automation
 - **Reporting**: Multi-format report generation (PDF, Excel, CSV, JSON, XML)
 - **Logging**: Serilog with structured logging and audit compliance
+- **Containerization**: Docker and Docker Compose for development and testing environments
+- **UI Testing**: Playwright for automated screenshot generation and testing
 
 ### Enterprise Architecture
 
@@ -248,6 +252,13 @@ For detailed deployment guidance, see [Production Deployment Guide](docs/PRODUCT
    # Build solution
    dotnet build TemenosAlertManager.sln --configuration Release
    
+   # Build frontend (optional - if you want to test the web UI)
+   ./build-frontend.sh
+   # Or manually:
+   # cd src/TemenosAlertManager.Web
+   # npm install
+   # npm run build
+   
    # Run the API
    cd src/TemenosAlertManager.Api
    dotnet run --environment Development
@@ -258,6 +269,28 @@ For detailed deployment guidance, see [Production Deployment Guide](docs/PRODUCT
    - **Hangfire Dashboard**: https://localhost:5001/hangfire
    - **Health Checks**: https://localhost:5001/health
    - **Monitoring Dashboard**: https://localhost:5001/api/monitoring/dashboard
+   - **Web UI**: https://localhost:5001 (after building frontend)
+
+### Docker Development Environment
+
+For quick setup with all dependencies, use Docker Compose:
+
+```bash
+# Start all services (SQL Server, IBM MQ, Redis, Mock Temenos services)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+**Docker Services:**
+- **SQL Server**: Port 1433 - Database for the platform
+- **IBM MQ**: Ports 1414, 9443 - Message queue simulation
+- **Redis**: Port 6379 - Caching layer
+- **Mock Temenos Services**: Ports 8080, 8443 - Simulated Temenos environment for testing
 
 ### Production Deployment Setup
 
@@ -300,6 +333,94 @@ For enterprise production environments:
    ```
 
 For comprehensive deployment instructions, see [Production Deployment Guide](docs/PRODUCTION_DEPLOYMENT_GUIDE.md).
+
+## 🎨 Frontend Development
+
+### Technology Stack
+The web frontend is built with modern technologies:
+- **Framework**: React 19.1 with TypeScript 5.9
+- **Build Tool**: Webpack 5 with development and production configurations
+- **State Management**: React hooks and context
+- **Real-time Updates**: SignalR for live monitoring data
+- **Charts & Visualization**: Chart.js 4.5 with react-chartjs-2
+- **HTTP Client**: Axios for API communication
+- **Routing**: React Router DOM 7.9
+- **Styling**: CSS with modular component styles
+
+### Frontend Development Workflow
+
+#### Quick Start
+```bash
+# Navigate to frontend directory
+cd src/TemenosAlertManager.Web
+
+# Install dependencies
+npm install
+
+# Start development server with hot reload
+npm start
+# Access at http://localhost:8080
+
+# Build for production
+npm run build
+# Output to dist/ directory
+```
+
+#### Frontend Build Script
+The repository includes an automated build script for convenience:
+```bash
+# From repository root
+./build-frontend.sh
+
+# This script:
+# 1. Installs dependencies if needed
+# 2. Builds the frontend for production
+# 3. Copies built files to API wwwroot directory
+```
+
+### Frontend Architecture
+
+#### Component Structure
+```
+src/TemenosAlertManager.Web/src/
+├── App.tsx                    # Main application component
+├── index.tsx                  # Application entry point
+├── components/                # Reusable UI components
+│   ├── ServiceCard.tsx       # Service status display
+│   ├── OperationMonitor.tsx  # SOD/EOD operation tracking
+│   └── Dashboard.tsx         # Main dashboard component
+├── pages/                     # Full page components
+│   ├── ServiceManagement.tsx # Service control page
+│   ├── Monitoring.tsx        # Real-time monitoring
+│   ├── Reports.tsx           # Report generation
+│   └── Administration.tsx    # Admin settings
+├── services/                  # API integration layer
+│   ├── apiClient.ts          # HTTP client configuration
+│   ├── serviceApi.ts         # Service management APIs
+│   └── monitoringApi.ts      # Monitoring data APIs
+└── types/                     # TypeScript definitions
+    ├── service.types.ts      # Service-related types
+    └── monitoring.types.ts   # Monitoring data types
+```
+
+#### Key Features
+- **Real-time Updates**: SignalR integration for live status updates
+- **Responsive Design**: Mobile-friendly interface with adaptive layouts
+- **Performance Monitoring**: Live charts and metrics visualization
+- **Service Control**: Interactive service management interface
+- **Operation Tracking**: Visual SOD/EOD operation progress
+- **Report Generation**: Multi-format report configuration and download
+
+### Testing & Documentation
+```bash
+# Generate UI screenshots for documentation
+npm run screenshots
+
+# View generated screenshots
+ls -la screenshots/
+```
+
+See [Screenshot Automation Guide](SCREENSHOT_AUTOMATION.md) for details on automated UI testing and documentation generation.
 
 ## 🔧 PowerShell Automation Modules
 
@@ -572,6 +693,10 @@ Response:
 - **[Security Model](docs/SECURITY_MODEL.md)** - Authentication, authorization, and audit framework
 - **[Compliance Guide](docs/COMPLIANCE_GUIDE.md)** - Regulatory compliance and audit requirements
 
+### UI Documentation
+- **[Screenshots](screenshots/README.md)** - Visual documentation of all application pages
+- **[Screenshot Automation](SCREENSHOT_AUTOMATION.md)** - Automated UI testing and documentation
+
 ## 🏗️ Project Structure
 
 ```
@@ -579,16 +704,31 @@ Temenos-Scripts/
 ├── src/                                    # Source code
 │   ├── TemenosAlertManager.Api/           # API layer with controllers and services
 │   ├── TemenosAlertManager.Core/          # Domain entities and interfaces
-│   └── TemenosAlertManager.Infrastructure/ # Data access and external services
+│   ├── TemenosAlertManager.Infrastructure/ # Data access and external services
+│   └── TemenosAlertManager.Web/           # React + TypeScript frontend application
+│       ├── src/                           # Frontend source code
+│       │   ├── components/                # Reusable React components
+│       │   ├── pages/                     # Page-level components
+│       │   ├── services/                  # API service layer
+│       │   └── types/                     # TypeScript type definitions
+│       ├── webpack.config.js              # Webpack development configuration
+│       └── webpack.prod.js                # Webpack production configuration
 ├── scripts/                               # PowerShell automation modules
-│   └── PowerShell/
-│       └── Modules/
-│           ├── TemenosChecks.SOD/         # SOD/EOD orchestration
-│           └── TemenosChecks.ServiceManagement/ # Service management
+│   ├── PowerShell/
+│   │   └── Modules/
+│   │       ├── TemenosChecks.SOD/         # SOD/EOD orchestration
+│   │       ├── TemenosChecks.ServiceManagement/ # Service management
+│   │       ├── TemenosChecks.TPH/         # Payment Hub operations
+│   │       ├── TemenosChecks.MQ/          # IBM MQ management
+│   │       └── TemenosChecks.Sql/         # SQL Server operations
+│   └── screenshot-automation.js           # Playwright UI automation
 ├── docs/                                  # Documentation
 │   ├── IMPLEMENTATION_SPECIFICATION.md   # Technical specifications
 │   ├── GITHUB_WORKSPACE_GUIDE.md        # GitHub Workspace setup
 │   └── TEMENOS_SANDBOX_GUIDE.md         # Sandbox environment setup
+├── screenshots/                           # UI screenshots and visual documentation
+├── docker-compose.yml                    # Docker development environment
+├── build-frontend.sh                     # Frontend build and deployment script
 └── tests/                                 # Test projects (future)
 ```
 
